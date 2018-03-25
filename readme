@@ -1,0 +1,15 @@
+这个项目是对java系统的学习笔记，分为以下几类
+design_of_class:
+    类的设计，包括继承（Super关键字）和多态（重载和重写）
+exception:
+    异常，包括try...catch的处理
+set:
+    java集合
+io:
+    字符流和字节流
+multiply_thread:
+    多线程
+design_pattern:
+    设计模式
+
+
