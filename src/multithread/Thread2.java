@@ -1,12 +1,12 @@
 package multithread;
 /*
 本例是实现多线程的方式二：实现Runnable接口
-① 实现Runnable接口
+1、实现Runnable接口
 存放线程执行代码的类去实现(implements) Runnable接口
-② 重写所实现接口的run方法，并将线程执行代码存放在run方法中
-③ 通过Thread类创建线程对象，并将Runnable接口的子类对象作为Thread类的构造函数的参数进行传递
+2、重写所实现接口的run方法，并将线程执行代码存放在run方法中
+3、通过Thread类创建线程对象，并将Runnable接口的子类对象作为Thread类的构造函数的参数进行传递
 为什么？因为线程的执行代码都封装在Runnable接口子类对象的run方法中，所以要在线程对象创建时就必须明确要执行的代码
-④ Thread线程对象调用start方法，启动线程
+4、Thread线程对象调用start方法，启动线程
  */
 public class Thread2 implements Runnable{
     private String name;
