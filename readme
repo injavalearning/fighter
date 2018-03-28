@@ -7,7 +7,7 @@ set:
     java集合
 io:
     字符流和字节流
-multiply_thread:
+multithread:
     多线程
 design_pattern:
     设计模式
