@@ -3,7 +3,7 @@ design_of_class:
     类的设计，包括继承（Super关键字）和多态（重载和重写）
 exception:
     异常，包括try...catch的处理
-set:
+collections:
     java集合
 io:
     字符流和字节流

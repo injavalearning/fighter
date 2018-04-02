@@ -1,0 +1,81 @@
+Java集合：
+
+HashTable和HashMap的区别：
+1、HashTable是线程安全的，HashMap不是线程安全的，HashMap性能会高一些。
+2、HashTable不允许null值(key和value都不可以) ,HashMap允许null值(key和value都可以)。
+3、哈希值的使用不同，HashTable直接使用对象的hashCode，代码如下
+       int hash = key.hashCode();
+       int index = (hash & 0x7FFFFFFF) % tab.length;
+   而HashMap重新计算hash值，而且用于代替求模（put方法会调用indexFor方法），代码如下：
+       int hash = hash(key);
+       int i = indexFor(hash, table.length);
+       static int hash(Object key) {
+           int h;
+           return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+       }
+       static int indexFor(int h, int length) {
+           return h & (length-1);    //按位取并，作用上相当于取模
+       }
+4、HashTable基于Dictionary类，HashMap基于AbstractMap类，两者都实现了Map接口。
+5、HashMap去掉了HashTable的contains方法，加上了containsKey和containsValue方法，
+   HashTable则保留了contains，containsValue和containsKey三个方法，其中contains和containsValue功能相同。
+6、HashTable中hash数组默认大小是11，增加的方式是 old*2+1，HashMap中hash数组的默认大小是16，而且一定是2的幂。
+
+ConcurrentHashMap：
+    锁分段技术：首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，
+其他段的数据也能被其他线程访问。
+    ConcurrentHashMap由Segment数组结构和HashEntry数组结构组成，是线程安全的。Segment是一种可重入锁ReentrantLock，
+在ConcurrentHashMap里扮演锁的角色，HashEntry则用于存储键值对数据。一个ConcurrentHashMap里包含一个Segment数组，
+Segment的结构和HashMap类似，是一种数组和链表结构，一个Segment里包含一个HashEntry数组，每个HashEntry是一个链表结构
+的元素，每个Segment守护一个HashEntry数组里的元素，当对HashEntry数组的数据进行修改时，首先要获得它对应的Segment锁。
+详见图：ConcurrentHashMap图
+    ConcurrentHashMap的并发度就是Segment数组的大小，默认为16，意味着最多可以有16条线程操作ConcurrentHashMap，这
+也是ConcurrentHashMap对HashTable的最大优势。HashTable线程安全的实现是在对应的方法上添加了synchronized关键字，
+所有访问HashTable的线程都必须竞争同一把锁。
+
+HashMap的问题：
+一：HashMap的原理：
+    答：HashMap是基于hashing的原理，它是在bucket中储存键对象和值对象，作为Map.Entry。我们使用put(key, value)存储
+对象到HashMap中，使用get(key)从HashMap中获取对象。当我们给put()方法传递键和值时，它先对键调用hashCode()方法，返回
+的hashCode用于找到bucket位置来储存Entry对象，当两个Entry对象的key的hashCode()返回值相同时，将由 key通过 equals()
+比较决定是采用覆盖行为，还是产生 Entry 链。当调用get()方法获取对象时，先使用键对象的hashcode找到bucket位置，找到
+bucket位置之后，通过键的equals()方法找到正确的键值对，然后返回值对象。
+    详解：HashMap实际上是一个“链表散列”的数据结构，即数组和链表的结合体，HashMap底层就是一个数组结构，数组中的每
+一项又是一个链表。当新建一个HashMap的时候，系统会创建一个长度为 capacity 的 Entry[] 数组，这个数组里可以存储元素的
+位置被称为“桶（bucket）”，每个 bucket 都有其指定索引，系统可以根据其索引快速访问该 bucket 里存储的元素,Entry就是
+数组中的元素，每个 Map.Entry 其实就是一个key-value对，它持有一个指向下一个元素的引用，这就构成了链表。哈希表最常用的
+一种实现方法就是“拉链法”，我们可以理解为“链表的数组”：拉链法图。
+拉链法图2：一个长度为16的数组，每个元素存储的是一个链表的头结点，这些元素一般是通过hash(key)%len的方式存储到数组中。
+Entry类里面有一个next属性，作用是指向下一个Entry。打个比方， 第一个键值对A进来，通过计算其key的hash得到的index=0，
+记做:Entry[0] = A。一会儿又进来一个键值对B，通过计算其index也等于0，现在怎么办？HashMap会这样做:B.next = A,
+Entry[0] = B,如果又进来C,index也等于0,那么C.next = B,Entry[0] = C，这样我们发现index=0的地方其实存取了A,B,C三个
+键值对,他们通过next这个属性链接在一起，也就是说数组中存储的是最后插入的元素。
+当创建 HashMap 时，有一个默认的负载因子（load factor），其默认值为 0.75，这是时间和空间成本上一种折衷：增大负载因子
+可以减少 Hash 表（就是那个 Entry 数组）所占用的内存空间，但会增加查询数据的时间开销，而查询是最频繁的的操作（HashMap
+的 get() 与 put() 方法都要用到查询）；减小负载因子会提高数据查询的性能，但会增加 Hash 表所占用的内存空间。
+
+二：怎样解决hash冲突：
+    答：HashMap使用链表来解决碰撞问题，HashMap底层是一个数组结构，数组中的每一项又是一个链表，每个 Map.Entry 其实
+就是一个key-value对，它持有一个指向下一个元素的引用。当发生碰撞时，也就是两个不同的键对象的hashCode相同时，它们会
+存储在同一个桶位置的链表中，最后插入的元素在链表的最前端，之前的元素都顺序往后移动。
+
+三：HashMap的大小为什么是2的幂次：
+    答：HashMap为了存取高效，要尽量减少碰撞，就是要尽量把数据分配均匀，每个链表长度大致相同，我们可以通过取模操作
+hash(key)%length 达到这个效果，计算机中直接求余效率不如位运算，源码中做了优化
+       static int indexFor(int h, int length) {
+           return h & (length-1);    //按位取并，作用上相当于取模
+       }
+如果length不为2的幂，比如15，那么length-1的2进制就会变成1110。在h为随机数的情况下，和1110做 & 操作，尾数永远为0。
+那么0001、1001、1101等尾数为1的位置就永远不可能被entry占用，这样会造成浪费，不随机等问题。而如果大小是2的幂次的话，
+因为2的n次方实际就是1后面n个0，2的n次方-1实际就是n个1，尾数为1，所以可以达到hash的平均分布。
+
+四：HashMap的resize（rehash）（扩容）
+    答：当HashMap中的元素个数超过 数组大小*loadFactor时，就会进行数组扩容。默认的负载因子大小为0.75，也就是说，
+当一个map填满了75%的bucket时候，和其它集合类(如ArrayList等)一样，将会创建原来HashMap大小的两倍的bucket数组，来重新
+调整HashMap的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehash，因为它调用hash方法找到新的bucket位置。
+
+五：为什么String, Integer这样的wrapper类适合作为键？
+    答：String, Integer这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，
+也是final的，而且已经重写了equals()和hashCode()方法了，其他的wrapper类也有这个特点。不可变性是必要的，因为为了
+要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashCode的话，那么就不能从HashMap中找到
+你想要的对象，如果两个不相等的对象返回不同的hashCode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。
