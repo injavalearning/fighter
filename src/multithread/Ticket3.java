@@ -1,19 +1,19 @@
 package multithread;
-
 /**
- * 本例是synchronized同步代码块
- * 格式：synchronized(对象) {
- *     需要被同步的代码;
- * }
- * 这里的锁对象可以是任意对象
+ * 本例是Lock锁实现同步
  */
-public class Ticket1 implements Runnable{
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class Ticket3 implements Runnable{
     private int ticketCount = 100;
-    //创建锁对象（类型可以理解为锁的牌子），这个也是共享的资源，多个线程使用的是同一锁对象
-    private Object obj = new Object();
+    private Lock lock = new ReentrantLock();
     public void run(){
         while(true) {
-            synchronized (obj) {
+            try {
+                //加锁
+                lock.lock();
                 if (ticketCount > 0) {
                     try {
                         Thread.sleep(100);
@@ -21,14 +21,15 @@ public class Ticket1 implements Runnable{
                         e.printStackTrace();
                     }
                     System.out.println(Thread.currentThread().getName() + "...sale..." + ticketCount--);
-                } else
-                    Thread.currentThread().interrupt();
+                }
+            }finally {
+                lock.unlock();
             }
         }
     }
 
     public static void main(String[] args) {
-        Ticket1 ticket = new Ticket1();
+        Ticket3 ticket = new Ticket3();
         Thread t1 = new Thread(ticket);
         Thread t2 = new Thread(ticket);
         t1.setName("窗口1");

@@ -1,0 +1,12 @@
+第三部分：虚拟机执行子系统
+
+HelloWorld的具体执行过程：
+1、执行HelloWorld.java文件，生成HelloWorld.class字节码文件。
+2、虚拟机执行HelloWorld.class，将这个类加载到内存中(即方法区的类代码区中)。
+3、虚拟机通过类找到HelloWorld的主方法(程序的入口方法)，访问权限为public（公有可用），虚拟机传递String[]
+(字符串数组对象：空数组)类型参数的地址到主方法的args中去，并在栈区为args开辟内存空间，返回一个void的返回值。
+4、定义一个String(标准类库中的)类型的变量(在栈区开辟空间)s，s的值不确定(垃圾值，编译无法通过)。
+5、s = “Hello World!”，对象“Hello World!”在方法区的常量数据区开辟空间，属性即为：Hello World!，方法即
+为：toString()，变量s存放对象“Hello World!”的地址。
+6、虚拟机找到标准类库中的System.class类并加载到内存中(即方法区的类代码区中)，System.out为标准字节输出流对象()，
+并调用println()方法将变量s的值打印到屏幕上。

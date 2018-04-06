@@ -1,9 +1,10 @@
 package multithread;
-/*
-本例是synchronized同步方法
-格式：把同步（synchronized）加在方法上，这时的锁对象是this
-注：同步是一种高开销的操作，因此应该尽量减少同步的内容
-    通常没有必要同步整个方法，使用synchronized代码块同步关键代码即可
+
+/**
+ * 本例是synchronized同步方法
+ * 格式：把同步（synchronized）加在方法上，这时的锁对象是this
+ * 注：同步是一种高开销的操作，因此应该尽量减少同步的内容
+ * 通常没有必要同步整个方法，使用synchronized代码块同步关键代码即可
  */
 public class Ticket2 implements Runnable{
     private int ticketCount = 100;
