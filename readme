@@ -1,15 +1,21 @@
 这个项目是对java系统的学习笔记，分为以下几类
+basic_grammar:
+    基础语法
 design_of_class:
-    类的设计，包括继承（Super关键字）和多态（重载和重写）
+    类的设计，包括面向对象概念，封装、继承和多态，重载和重写
 exception:
     异常，包括try...catch的处理
 collections:
-    java集合
+    java集合，HashMap
 io:
     字符流和字节流
 multithread:
-    多线程
+    进程和线程，多线程，线程池
 design_pattern:
     设计模式
+JVM:
+    Java虚拟机部分
+
+
 
 
