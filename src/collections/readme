@@ -79,3 +79,8 @@ hash(key)%length 达到这个效果，计算机中直接求余效率不如位运
 也是final的，而且已经重写了equals()和hashCode()方法了，其他的wrapper类也有这个特点。不可变性是必要的，因为为了
 要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashCode的话，那么就不能从HashMap中找到
 你想要的对象，如果两个不相等的对象返回不同的hashCode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。
+
+ArrayList和LinkedList的区别：
+1、ArrayList是实现了基于动态数组的数据结构，LinkedList是基于链表的数据结构。
+2、对于查找操作get和set，ArrayList优于LinkedList，因为LinkedList要移动指针，只能从头或尾遍历查找。
+3、对于插入和删除操作add和remove，LinedList比较占优势，因为ArrayList要移动数据，插入位置之后的数据都要顺移一位。
