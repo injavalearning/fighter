@@ -31,6 +31,7 @@ SHOW COLUMNS FROM student;   显示表列
 | Sdept | char(15) | YES  |     | NULL    |       |
 +-------+----------+------+-----+---------+-------+
 
+检索数据：
 SELECT语句：从一个或多个表中检索信息
 检索单个列：SELECT Sname FROM student;
 +-------+
@@ -53,7 +54,7 @@ SELECT语句：从一个或多个表中检索信息
 | 20123 | KOBE  | 0    | Lakers     |
 | 20124 | CURRY | 0    | Basketball |
 +-------+-------+------+------------+
-DISTINCT关键字：只返回不同值的Ssex行，比如：检索一个列（供应商ID），这个列有很多重复值，我不想每个值每次都出现，
+DISTINCT关键字：只返回不同值的Ssex行，例如：检索一个列（供应商ID），这个列有很多重复值，我不想每个值每次都出现，
 只需要知道有哪几家供应商。
 SELECT DISTINCT Ssex FROM student;
 +------+
@@ -61,7 +62,7 @@ SELECT DISTINCT Ssex FROM student;
 +------+
 | 0    |
 +------+
-LIMIT关键字：限定行数，返回不多于指定的行
+LIMIT字句：限定行数，返回不多于指定的行
 SELECT Sname FROM student LIMIT 1;
 +-------+
 | Sname |
@@ -80,6 +81,204 @@ SELECT Sname FROM student LIMIT 1,1;   检索出来的第一行为行0而不是�
 +-------+
 | CURRY |
 +-------+
+
+排序检索数据：
+ORDER BY子句：取一个或多个列的名字，据此对输出进行排序，使用 ASC 或 DESC 关键字设置查询结果是按升序或降序排列，默认升序
+这个子句如果使用必须是SELECT语句中的最后一条子句。
+按一个列排序：
+SELECT * FROM student ORDER BY Sname;
++-------+-------+------+------------+
+| Sno   | Sname | Ssex | Sdept      |
++-------+-------+------+------------+
+| 20124 | CURRY | 0    | Basketball |
+| 20123 | KOBE  | 0    | Lakers     |
++-------+-------+------+------------+
+SELECT * FROM student ORDER BY Sname DESC;
++-------+-------+------+------------+
+| Sno   | Sname | Ssex | Sdept      |
++-------+-------+------+------------+
+| 20123 | KOBE  | 0    | Lakers     |
+| 20124 | CURRY | 0    | Basketball |
++-------+-------+------+------------+
+SELECT Sname FROM student ORDER BY Sname;
++-------+
+| Sname |
++-------+
+| CURRY |
+| KOBE  |
++-------+
+按多个列排序：例如：希望雇员清单按姓和名排序（首先按姓排序，然后在每个姓中按名排序）
+SELECT prod_id,prod_price,prod_name FROM products ORDER BY prod_price,prod_name;
++-----------+------------+-----------+
+|  prod_id  | prod_price | prod_name |
++-----------+------------+-----------+
+|   KFC     |     2.50   |  Cola     |
+|   DQ      |     2.50   |  IceCream |
+|   C&A     |     4.49   |  Shirt    |
+|   Zara    |     8.99   |  Shoe     |
++-----------+------------+-----------+
+SELECT prod_id,prod_price,prod_name FROM products ORDER BY prod_price DESC,prod_name;
+DESC关键字只应用到直接位于其前面的列名。在上例中，只对prod_price列指定DESC，对prod_name列不指定。因此，prod_price列以
+降序排序，而prod_name列（在每个价格内）仍然按标准的升序排序。如果想在多个列上进行降序排序，必须对每个列指定DESC关键字。
+使用ORDER BY和LIMIT的组合，能够找出一个列中最高或最低的值，例如：
+SELECT prod_price FROM products ORDER BY prod_price DESC,LIMIT 1;
++------------+
+| prod_price |
++------------+
+|    8.99    |
++------------+
+
+过滤数据：
+WHERE子句：在SELECT语句中，数据根据WHERE子句中指定的搜索条件进行过滤，WHERE子句在表名（FROM子句）之后给出。
+SELECT Sno,Sname FROM student WHERE Sno = 20123;
++-------+-------+
+| Sno   | Sname |
++-------+-------+
+| 20123 | KOBE  |
++-------+-------+
+WHERE子句操作符：= 等于  <> 不等于  != 不等于  < 小于  <= 小于等于  > 大于  >= 大于等于  BETWEEN 在指定的两个值之间
+SELECT prod_name,prod_price FROM products WHERE prod_price < 5;
++-------------+------------+
+|  prod_name  | prod_price |
++-------------+------------+
+|   Cola      |     2.50   |
+|   Shirt     |     4.49   |
+|   IceCream  |     2.50   |
++-------------+------------+
+SELECT prod_name,prod_price FROM products WHERE prod_price BETWEEN 1 AND 3;
++-------------+------------+
+|  prod_name  | prod_price |
++-------------+------------+
+|   Cola      |     2.50   |
+|   IceCream  |     2.50   |
++-------------+------------+
+WHERE子句的IS NULL子句可以检索具有NULL值的列
+SELECT cust_id FROM customers WHERE cust_email IS NULL;   检索没有电子邮件地址的顾客id
++---------+
+| cust_id |
++---------+
+|  10002  |
+|  10005  |
++---------+
+组合WHERE子句：
+1、使用AND操作符给WHERE子句附加条件，检索由供应商1003制造且价格小于等于10的所有产品的名称和价格
+SELECT prod_id,prod_price,prod_name FROM products WHERE vend_id = 1003 AND prod_price <= 10;
+2、OR操作符与AND操作符不同，它指示MySQL检索匹配满足任一条件的行
+SELECT prod_name，prod_price,vend_id FROM products WHERE vend_id = 1002 OR vend_id = 1003;
+AND操作符比OR操作符优先级高，所以会优先处理AND操作符，可以使用圆括号对多个操作符进行分组
+SELECT prod_name,prod_price FROM products WHERE (vend_id = 1002 OR vend_id = 1003) AND prod_price >= 10;
+如果不加圆括号的话，会检索出由供应商1003供应的价格大于等于10的商品 或 供应商1002供应的商品（不限价格）
+3、IN操作符用来指定条件范围，功能与OR相当
+SELECT prod_name,prod_price FROM products WHERE vend_id IN (1002,1003) ORDER BY prod_name;
++-------------+------------+
+|  prod_name  | prod_price |
++-------------+------------+
+|   Bird seed |   10.00    |
+|   Carrots   |    2.50    |
+|   Detonator |   13.00    |
++-------------+------------+
+4、NOT操作符否定它之后所跟的条件
+SELECT prod_name,prod_price FROM products WHERE vend_id NOT IN (1002,1003) ORDER BY prod_name;
+列出除1002和1003之外的所有供应商供应的产品
+
+用通配符进行搜索：
+通配符用来匹配值的一部分的特殊字符
+例如：怎样搜索产品名中包含文本Bird的所有产品？用简单的比较操作符肯定不行，必须使用通配符，利用通配符可以创建比较特定
+数据的搜索模式。搜索模式（search pattern）：由字面值、通配符或两者组合构成的搜索条件。
+在搜索子句中使用通配符，必须使用LIKE操作符，LIKE指示MySQL，后跟的搜索模式利用通配符匹配而不是直接相等匹配进行比较。
+1、百分号（%）通配符
+在搜索串中，% 表示出现任意次数的任何字符
+SELECT prod_id,prod_name FROM products WHERE prod_name LIKE 'jet%';
++------------+--------------+
+|  prod_id   |  prod_name   |
++------------+--------------+
+|   JP1000   | JetPack 1000 |
+|   JP2000   | JetPack 2000 |
++------------+--------------+
+这个例子使用了搜索模式'jet%'，在执行这条子句时，将检索任意以jet开头的词，%告诉MySQL接受jet之后的任意字符，不管它有多少
+字符。
+SELECT prod_id,prod_name FROM products WHERE prod_name LIKE '%anvil%';
++------------+--------------+
+|  prod_id   |  prod_name   |
++------------+--------------+
+|   ANV01    | 1 ton anvil  |
+|   ANV02    | 2 ton anvil  |
+|   ANV03    | 3 ton anvil  |
++------------+--------------+
+搜索模式'%anvil%'表示匹配包含文本anvil的值，而不论它之前或之后出现什么字符，如果用'anvil%'则会显示 Empty set。
+除了一个或多个字符外，%还能匹配0个字符，%代表搜索模式中给定位置的0个、1个或多个字符。
+2、下划线（_）通配符
+下划线的用途与%一样，但下划线只匹配单个字符而不是多个字符。
+用法：SELECT prod_id,prod_name FROM products WHERE prod_name LIKE '_ ton anvil';
+
+用正则表达式进行搜索：REGEXP(regular expression)
+正则表达式用来匹配文本的特殊字符集合
+1、基本字符匹配
+SELECT prod_name FROM products WHERE prod_name REGEXP '1000' ORDER BY prod_name;
++--------------+
+|  prod_name   |
++--------------+
+| JetPack 1000 |
++--------------+
+REGEXP后跟的东西作为正则表达式处理
+SELECT prod_name FROM products WHERE prod_name REGEXP '.000' ORDER BY prod_name;
++--------------+
+|  prod_name   |
++--------------+
+| JetPack 1000 |
+| JetPack 2000 |
++--------------+
+.是正则表达式中一个特殊的字符，它表示匹配任意一个字符
+2、进行OR匹配
+ | 为正则表达式的OR操作符
+SELECT prod_name FROM products WHERE prod_name REGEXP '1000|2000' ORDER BY prod_name;
++--------------+
+|  prod_name   |
++--------------+
+| JetPack 1000 |
+| JetPack 2000 |
++--------------+
+可以给出两个以上的OR条件，例如，'1000 | 2000 | 3000'将匹配1000或2000或3000
+3、匹配几个字符之一
+通过指定一组用[]括起来的字符，例如[123]定义一组字符，它的意思是匹配1或2或3，[]是另一种形式的OR语句
+SELECT prod_name FROM products WHERE prod_name REGEXP '[123] Ton' ORDER BY prod_name;
++--------------+
+|  prod_name   |
++--------------+
+| 1 ton anvil  |
+| 2 ton anvil  |
+| 3 ton anvil  |
++--------------+
+4、匹配范围
+集合可用来定义要匹配的一个或多个字符，使用 - 来定义一个范围，例如[0-9]、[a-z]
+SELECT prod_name FROM products WHERE prod_name REGEXP '[1-5] Ton' ORDER BY prod_name;
++--------------+
+|  prod_name   |
++--------------+
+| 1 ton anvil  |
+| 2 ton anvil  |
+| 3 ton anvil  |
++--------------+
+5、匹配特殊字符
+匹配特殊字符，必须用\\为前导，\\- 表示查找 - ，\\. 表示查找 .，\为反斜杠转义字符
+SELECT vend_name FROM vendors WHERE vend_name REGEXP '\\.' ORDER BY vend_name;
++--------------+
+|  vend_name   |
++--------------+
+|  Hello Inc.  |
++--------------+
+6、匹配多个实例
+SELECT prod_name FROM products WHERE prod_name REGEXP '\\([0-9] sticks?\\)' ORDER BY prod_name;
++---------------+
+|   prod_name   |
++---------------+
+| TNT (1 stick) |
+| TNT (5 sticks)|
++---------------+
+sticks?匹配stick和sticks（s后的?使s可选，因为?匹配它前面的任何字符的0次或1次出现），\\)匹配)
+
+
+
 
 
 
