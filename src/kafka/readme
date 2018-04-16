@@ -1,0 +1,36 @@
+副本机制：
+    kafka的副本（Replica）机制，目的是为了增加kafka集群的高可用性。kafka实现副本机制后，每个分区可以有多个副本，并且会
+从其副本集合（Assigned Replica，AR）中选出一个副本作为Leader副本，所有的读写请求都由选举出的Leader副本处理。剩余的其他
+副本都做为Follower副本，Follower副本会从Leader副本处获取消息并更新到自己的Log中。同一分区的多个副本会被均匀地分配到集群
+中的不同Broker上，当Leader副本所在的Broker出现故障时，可以重新选举新的Leader副本继续对外提供服务。通过这种方式提高了
+kafka集群的可用性。
+    在一个分区的Leader副本中会维护自身以及所有Follower副本的相关状态，而Follower副本只维护自己的状态。
+    Follower副本可以批量的从Leader副本复制消息，加快了网络I/O，Follower副本在更新消息时是批量写磁盘，加速了磁盘的I/O，
+极大减少了Follower与Leader的差距。
+
+ISR集合：
+    ISR（In-Sync Replica）已同步的副本，表示的是目前“可用（alive）”且消息量与Leader相差不多（能够catch-up）的副本集合，
+它是整个副本集合的一个子集。ISR集合中的副本所在节点必须维持着与zookeeper的连接（通过zookeeper的心跳机制）。每个分区中的
+Leader副本都会维护此分区的ISR集合，写请求首先由Leader副本处理，之后Follower副本会从Leader上拉取写入的消息，这个过程会有
+一定的延迟（包括延迟时间和延迟条数两个维度），任意一个超过阈值都会把该Replica踢出ISR，Kafka 0.10.x版本后移除了延迟条数
+这个维度，只保留延迟时间作为ISR中副本管理的参数。当Follower副本从异常中恢复之后，会继续与Leader副本进行同步，当Follower
+副本“追上”Leader副本的时候，这个Follower副本会被Leader副本重新加入到ISR中。
+    PS：延迟时间可以理解为producer往leader中发送了message后，针对每个message有个计时器，如果超过一定的时间follower还
+没有从leader上拉取这个message，则认为延迟时间超过阈值。
+
+HW & LEO：
+    HW（HighWatermark，高水位），HW标记了一个特殊的offset，当消费者处理消息的时候，只能拉取到HW之前的消息，HW之后的消息
+对消费者来说是不可见的。HW也是由Leader副本管理的，当ISR集合中全部的Follower副本都拉取HW指定消息进行同步后，Leader副本
+会递增HW的值。HW之前的消息的状态称为“commit”，意思是这些消息在多个副本中同时存在，即使此时Leader副本损坏，也不会出现
+数据丢失。
+    LEO（Log End Offset），是所有的副本都会有的一个offset标记，它指向追加到当前副本的最后一个消息的offset。当生产者向
+Leader副本追加消息的时候，Leader副本的LEO标记会递增；当Follower副本成功从Leader副本拉取消息并更新到本地的时候，Follower
+副本的LEO就会增加。
+
+Cluster & Controller：
+    多个Broker可以做成一个Cluster（集群）对外提供服务，每个Cluster当中会选举出一个Broker来担任Controller，Controller是
+kafka集群的指挥中心，其他Broker则听从Controller指挥实现相应的功能。Controller负责管理整个集群中分区和分区中副本的状态、
+监听zookeeper中数据的变化。Controller也是一主多从的实现，所有Broker都会监听Controller Leader的状态，当Controller Leader
+出现故障时会重新选举新的Controller Leader。
+
+
