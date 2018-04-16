@@ -1,4 +1,4 @@
-package design_pattern;
+package Java.design_pattern;
 
 /**
  * 饿汉式：在程序启动或单例模式类被加载的时候，单例模式实例就已经被创建（建议使用）

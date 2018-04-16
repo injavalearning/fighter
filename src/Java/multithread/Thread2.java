@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 
 /**
  * 本例是实现多线程的方式二：实现Runnable接口

@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 /**
  * 本例是线程池的使用，包括线程池的创建、线程执行和关闭
  */

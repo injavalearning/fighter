@@ -1,4 +1,4 @@
-package design_pattern;
+package Java.design_pattern;
 /*
 本例是线程安全的懒汉式，能够在多线程中很好的工作，但是，效率很低（加锁影响效率）
  */

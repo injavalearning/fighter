@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 /**
  * 本例是Lock锁实现同步
  */

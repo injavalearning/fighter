@@ -11,10 +11,10 @@ session的一个场景是购物车，添加了商品之后客户端处可以知�
     如果说Cookie机制是通过检查客户身上的“通行证”来确定客户身份的话，那么Session机制就是通过检查服务器上的
 “客户明细表”来确认客户身份。Session相当于程序在服务器上建立的一份客户档案，客户来访的时候只需要查询客户档案表就可以了。
 
-    所以主要区别是：
-    1、cookie在客户端（浏览器），session在服务器端
-    2、session的运行依赖session id，session id存在cookie中，如果浏览器禁用了cookie，session也会失效（但是可以通过url
+所以主要区别是：
+1、cookie在客户端（浏览器），session在服务器端
+2、session的运行依赖session id，session id存在cookie中，如果浏览器禁用了cookie，session也会失效（但是可以通过url
 传值（session id）来实现）
-    3、session过多的时候会消耗服务器资源，session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。
+3、session过多的时候会消耗服务器资源，session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。
 考虑到减轻服务器性能方面，应当使用cookie。
-    4、cookie不是很安全，别人可以分析存放在本地的cookie并进行cookie欺骗，考虑安全的话应该用session。
+4、cookie不是很安全，别人可以分析存放在本地的cookie并进行cookie欺骗，考虑安全的话应该用session。

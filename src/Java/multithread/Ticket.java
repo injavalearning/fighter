@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 
 /**
  * 本例是线程安全问题的介绍，引用的是最常见的多窗口售票问题

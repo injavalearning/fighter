@@ -1,4 +1,4 @@
-package design_of_class;
+package Java.design_of_class;
 
 /**
  * 本例是父类引用指向子类对象的讲解，Animal是父类

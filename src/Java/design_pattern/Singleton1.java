@@ -1,4 +1,4 @@
-package design_pattern;
+package Java.design_pattern;
 
 /**
  * 懒汉式：当程序第一次访问单例模式实例时才进行创建（时间换空间）

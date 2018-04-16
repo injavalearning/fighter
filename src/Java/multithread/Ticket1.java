@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 
 /**
  * 本例是synchronized同步代码块
@@ -12,18 +12,16 @@ public class Ticket1 implements Runnable{
     //创建锁对象（类型可以理解为锁的牌子），这个也是共享的资源，多个线程使用的是同一锁对象
     private Object obj = new Object();
     public void run(){
-        while(true) {
-            synchronized (obj) {
-                if (ticketCount > 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println(Thread.currentThread().getName() + "...sale..." + ticketCount--);
-                } else
-                    Thread.currentThread().interrupt();
-            }
+        while(true) synchronized (obj) {
+            if (ticketCount > 0) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(Thread.currentThread().getName() + "...sale..." + ticketCount--);
+            } else
+                Thread.currentThread().interrupt();
         }
     }
 

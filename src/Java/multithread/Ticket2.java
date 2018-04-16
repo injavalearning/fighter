@@ -1,4 +1,4 @@
-package multithread;
+package Java.multithread;
 
 /**
  * 本例是synchronized同步方法
