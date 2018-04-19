@@ -1,0 +1,9 @@
+1、SELECT sname,ssex,Class FROM student;
+2、SELECT DISTINCT depart FROM teacher;
+3、SELECT * FROM student;
+4、SELECT * FROM score WHERE degree >= 60 AND degree <= 80;
+5、SELECT * FROM score WHERE degree IN(85,86,88);
+6、SELECT * FROM student WHERE class = "95031" OR ssex = "女";
+7、SELECT * FROM student ORDER BY class DESC;
+8、SELECT * FROM score ORDER BY cno,degree DESC;
+9、

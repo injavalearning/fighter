@@ -1,0 +1,112 @@
+表结构：
+首先创建四个表（已创建好）
+学生表（学号，姓名，性别，生日，班级）
+课程表（课程号，课程名，任课教师编号）
+分数表（学生学号，课程号，分数）
+教师表（教师编号，教师名，生日，系）
+CREATE TABLE STUDENT
+(SNO VARCHAR(3) NOT NULL,
+SNAME VARCHAR(4) NOT NULL,
+SSEX VARCHAR(2) NOT NULL,
+SBIRTHDAY DATETIME,
+CLASS VARCHAR(5))
+
+CREATE TABLE COURSE
+(CNO VARCHAR(5) NOT NULL,
+CNAME VARCHAR(10) NOT NULL,
+TNO VARCHAR(10) NOT NULL)
+
+CREATE TABLE SCORE
+(SNO VARCHAR(3) NOT NULL,
+CNO VARCHAR(5) NOT NULL,
+DEGREE NUMERIC(10, 1) NOT NULL)
+
+CREATE TABLE TEACHER
+(TNO VARCHAR(3) NOT NULL,
+TNAME VARCHAR(4) NOT NULL, TSEX VARCHAR(2) NOT NULL,
+TBIRTHDAY DATETIME NOT NULL, PROF VARCHAR(6),
+DEPART VARCHAR(10) NOT NULL)
+
+接着插入数据（已插入）
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (108 ,'曾华'
+,'男' ,'1977-09-01',95033);
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (105 ,'匡明'
+,'男' ,'1975-10-02',95031);
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (107 ,'王丽'
+,'女' ,'1976-01-23',95033);
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (101 ,'李军'
+,'男' ,'1976-02-20',95033);
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (109 ,'王芳'
+,'女' ,'1975-02-10',95031);
+INSERT INTO STUDENT (SNO,SNAME,SSEX,SBIRTHDAY,CLASS) VALUES (103 ,'陆君'
+,'男' ,'1974-06-03',95031);
++-----+--------+------+---------------------+-------+
+| SNO | SNAME  | SSEX | SBIRTHDAY           | CLASS |
++-----+--------+------+---------------------+-------+
+| 108 | 曾华   | 男   | 1977-09-01 00:00:00 | 95033 |
+| 105 | 匡明   | 男   | 1975-10-02 00:00:00 | 95031 |
+| 107 | 王丽   | 女   | 1976-01-23 00:00:00 | 95033 |
+| 101 | 李军   | 男   | 1976-02-20 00:00:00 | 95033 |
+| 109 | 王芳   | 女   | 1975-02-10 00:00:00 | 95031 |
+| 103 | 陆君   | 男   | 1974-06-03 00:00:00 | 95031 |
++-----+--------+------+---------------------+-------+
+
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('3-105' ,'计算机导论',825);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('3-245' ,'操作系统' ,804);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('6-166' ,'数据电路' ,856);
+INSERT INTO COURSE(CNO,CNAME,TNO)VALUES ('9-888' ,'高等数学' ,100);
++-------+-----------------+-----+
+| CNO   | CNAME           | TNO |
++-------+-----------------+-----+
+| 6-166 | 数据电路        | 856 |
+| 9-888 | 高等数学        | 100 |
+| 3-105 | 计算机导论      | 825 |
++-------+-----------------+-----+
+
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-245',86);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-245',75);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-245',68);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (103,'3-105',92);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (105,'3-105',88);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (109,'3-105',76);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'3-105',64);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'3-105',91);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'3-105',78);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (101,'6-166',85);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (107,'6-106',79);
+INSERT INTO SCORE(SNO,CNO,DEGREE)VALUES (108,'6-166',81);
++-----+-------+--------+
+| SNO | CNO   | DEGREE |
++-----+-------+--------+
+| 103 | 3-245 |   86.0 |
+| 105 | 3-245 |   75.0 |
+| 109 | 3-245 |   68.0 |
+| 103 | 3-105 |   92.0 |
+| 105 | 3-105 |   88.0 |
+| 109 | 3-105 |   76.0 |
+| 101 | 3-105 |   64.0 |
+| 107 | 3-105 |   91.0 |
+| 108 | 3-105 |   78.0 |
+| 101 | 6-166 |   85.0 |
+| 107 | 6-106 |   79.0 |
+| 108 | 6-166 |   81.0 |
++-----+-------+--------+
+
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART)
+VALUES (804,'李诚','男','1958-12-02','副教授','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART)
+VALUES (856,'张旭','男','1969-03-12','讲师','电子工程系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART)
+VALUES (825,'王萍','女','1972-05-05','助教','计算机系');
+INSERT INTO TEACHER(TNO,TNAME,TSEX,TBIRTHDAY,PROF,DEPART)
+VALUES (831,'刘冰','女','1977-08-14','助教','电子工程系');
++-----+--------+------+---------------------+-----------+-----------------+
+| TNO | TNAME  | TSEX | TBIRTHDAY           | PROF      | DEPART          |
++-----+--------+------+---------------------+-----------+-----------------+
+| 804 | 李诚   | 男   | 1958-12-02 00:00:00 | 副教授    | 计算机系        |
+| 856 | 张旭   | 男   | 1969-03-12 00:00:00 | 讲师      | 电子工程系      |
+| 825 | 王萍   | 女   | 1972-05-05 00:00:00 | 助教      | 计算机系        |
+| 831 | 刘冰   | 女   | 1977-08-14 00:00:00 | 助教      | 电子工程系      |
++-----+--------+------+---------------------+-----------+-----------------+
+
+
