@@ -6,4 +6,9 @@
 6、SELECT * FROM student WHERE class = "95031" OR ssex = "女";
 7、SELECT * FROM student ORDER BY class DESC;
 8、SELECT * FROM score ORDER BY cno,degree DESC;
-9、
+9、SELECT COUNT(sno) AS num_student FROM student WHERE class = "95031";
+10、
+11、SELECT AVG(degree) AS avg_degree FROM score WHERE cno = "3-105";
+12、SELECT AVG(degree) AS avg_degree FROM score WHERE cno LIKE '3%' GROUP BY cno HAVING COUNT(*) >= 5;
+13、
+14、

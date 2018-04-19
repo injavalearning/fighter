@@ -6,6 +6,11 @@ ALTER（修改）、TRUNCATE（截断）、RENAME（重命名）
 主键（primary key）：
     表中的每一行都应该具有可以唯一标识自己的一列，这个承担标识作用的列称为主键。主键是唯一的，一个数据表中只能包含一个
 主键，可以使用主键来查询数据，一般设ID号为主键。
+外键（foreign key）：
+    外键为某个表中的一列，它又是另一个表的主键值，定义了两个表的关系，用来将两个表建立联系。例如两个表（一个vendors表，
+一个products表），vendors表存储所有供应商信息；products表存储产品信息，它除了存储供应商ID（vendors表的主键）外不存储
+其他供应商信息。vendors表的主键又叫作products的外键，它将vendors表与products表关联，利用供应商ID能从vendors表中找出相应
+供应商的详细信息。
 
 SHOW DATABASES;   返回可用的数据库列表
 +--------------------+
@@ -38,6 +43,7 @@ SHOW COLUMNS FROM student;   显示表列
 一：创建和操纵表
 1、创建数据库：
 CREATE DATABASE market;
+
 2、创建表：
 USE market;
 CREATE TABLE orders
@@ -217,14 +223,14 @@ SELECT cust_id FROM customers WHERE cust_email IS NULL;   检索没有电子邮�
 |  10005  |
 +---------+
 组合WHERE子句：
-1、使用AND操作符给WHERE子句附加条件，检索由供应商1003制造且价格小于等于10的所有产品的名称和价格
+①、使用AND操作符给WHERE子句附加条件，检索由供应商1003制造且价格小于等于10的所有产品的名称和价格
 SELECT prod_id,prod_price,prod_name FROM products WHERE vend_id = 1003 AND prod_price <= 10;
-2、OR操作符与AND操作符不同，它指示MySQL检索匹配满足任一条件的行
+②、OR操作符与AND操作符不同，它指示MySQL检索匹配满足任一条件的行
 SELECT prod_name，prod_price,vend_id FROM products WHERE vend_id = 1002 OR vend_id = 1003;
 AND操作符比OR操作符优先级高，所以会优先处理AND操作符，可以使用圆括号对多个操作符进行分组
 SELECT prod_name,prod_price FROM products WHERE (vend_id = 1002 OR vend_id = 1003) AND prod_price >= 10;
 如果不加圆括号的话，会检索出由供应商1003供应的价格大于等于10的商品 或 供应商1002供应的商品（不限价格）
-3、IN操作符用来指定条件范围，功能与OR相当
+③、IN操作符用来指定条件范围，功能与OR相当
 SELECT prod_name,prod_price FROM products WHERE vend_id IN (1002,1003) ORDER BY prod_name;
 +-------------+------------+
 |  prod_name  | prod_price |
@@ -233,7 +239,7 @@ SELECT prod_name,prod_price FROM products WHERE vend_id IN (1002,1003) ORDER BY 
 |   Carrots   |    2.50    |
 |   Detonator |   13.00    |
 +-------------+------------+
-4、NOT操作符否定它之后所跟的条件
+④、NOT操作符否定它之后所跟的条件
 SELECT prod_name,prod_price FROM products WHERE vend_id NOT IN (1002,1003) ORDER BY prod_name;
 列出除1002和1003之外的所有供应商供应的产品
 
@@ -242,7 +248,7 @@ SELECT prod_name,prod_price FROM products WHERE vend_id NOT IN (1002,1003) ORDER
 例如：怎样搜索产品名中包含文本Bird的所有产品？用简单的比较操作符肯定不行，必须使用通配符，利用通配符可以创建比较特定
 数据的搜索模式。搜索模式（search pattern）：由字面值、通配符或两者组合构成的搜索条件。
 在搜索子句中使用通配符，必须使用LIKE操作符，LIKE指示MySQL，后跟的搜索模式利用通配符匹配而不是直接相等匹配进行比较。
-1、百分号（%）通配符
+①、百分号（%）通配符
 在搜索串中，% 表示出现任意次数的任何字符
 SELECT prod_id,prod_name FROM products WHERE prod_name LIKE 'jet%';
 +------------+--------------+
@@ -263,7 +269,7 @@ SELECT prod_id,prod_name FROM products WHERE prod_name LIKE '%anvil%';
 +------------+--------------+
 搜索模式'%anvil%'表示匹配包含文本anvil的值，而不论它之前或之后出现什么字符，如果用'anvil%'则会显示 Empty set。
 除了一个或多个字符外，%还能匹配0个字符，%代表搜索模式中给定位置的0个、1个或多个字符。
-2、下划线（_）通配符
+②、下划线（_）通配符
 下划线的用途与%一样，但下划线只匹配单个字符而不是多个字符。
 用法：SELECT prod_id,prod_name FROM products WHERE prod_name LIKE '_ ton anvil';
 
@@ -332,6 +338,78 @@ SELECT prod_name FROM products WHERE prod_name REGEXP '\\([0-9] sticks?\\)' ORDE
 | TNT (5 sticks)|
 +---------------+
 sticks?匹配stick和sticks（s后的?使s可选，因为?匹配它前面的任何字符的0次或1次出现），\\)匹配)
+
+
+五：聚集函数
+AVG():      返回某列的平均值
+COUNT():    返回某列的行数
+MAX():      返回某列的最大值
+MIN():      返回某列的最小值
+SUM():      返回某列值之和
+
+1、AVG()
+平均值，SELECT AVG(prod_price) AS avg_price FROM products;
+AVG只用于单个列，而且列名必须作为函数参数给出，若想获得多个列的平均值，必须使用多个AVG()函数
+
+2、COUNT()
+计数，利用COUNT()确定表中行的数目或符合特定条件的行的数目
+①：使用COUNT(*)对表中行的数目进行计数，不管表列中包含的是空值（NULL）还是非空值。
+SELECT COUNT(*) AS num_cust FROM customers;        对顾客表中客户的总数进行计数
++-------------+
+|  num_cust   |
++-------------+
+|      5      |
++-------------+
+②：使用COUNT(column)对特定列中具有值的行进行计数，忽略NULL值。
+SELECT COUNT(cust_email) AS num_cust FROM customers;
++-------------+
+|  num_cust   |
++-------------+
+|      3      |
++-------------+
+
+3、MAX()
+最大值，SELECT MAX(prod_price) AS max_price FROM products;
+
+4、MIN()
+最小值，SELECT MIN(prod_price) AS min_price FROM products;
+
+5、SUM()
+求和，用来返回指定列值的和
+SELECT SUM(quantity) AS items_ordered FROM orderitems WHERE order_num = 20005;              得出这个商品的总数
+SELECT SUM(item_price*quantity) AS total_price FROM orderitems WHERE order_num = 20005;     得出总的订单金额
+
+
+六：数据分组
+1、GROUP BY子句：
+SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id;
++------------+--------------+
+|  vend_id   |  num_prods   |
++------------+--------------+
+|    1001    |         3    |
+|    1002    |         2    |
+|    1003    |         7    |
+|    1005    |         2    |
++------------+--------------+
+GROUP BY子句指示MySQL分组数据，然后对每个组而不是整个结果集进行聚集。
+
+2、HAVING过滤分组（不同于WHERE，WHERE是过滤行，HAVING是过滤分组）
+SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id HAVING COUNT(*) > 2;
++------------+--------------+
+|  vend_id   |  num_prods   |
++------------+--------------+
+|    1001    |         3    |
+|    1003    |         7    |
++------------+--------------+
+WHERE在数据分组前进行过滤，HAVING在数据分组后进行过滤。
+
+
+七：表连接
+    关系表的设计就是要保证把信息分解成多个表，一类数据一个表。各表通过某些常用的值（即关系设计中的关系（relational））互
+相关联。
+1、内连接（INNER JOIN）
+内连接使用比较运算符根据每个表共有的列的值匹配两个表中的行，INNER可以不写，则默认为内连接。
+SELECT vend_name,prod_name,prod_price FROM vendors INNER JOIN products ON vendors.vend_id = products.vend_id;
 
 
 
