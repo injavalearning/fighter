@@ -426,6 +426,7 @@ SELECT cust_id FROM orders WHERE order_num IN (SELECT order_num FROM orderitems 
 
 查询最高分的学生学号和课程号
 SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 1);
+或者：SELECT sno,cno FROM score WHERE degree = (SELECT MAX(degree) AS max_degree FROM score);
 
 查询前三名的学生学号和课程号
 错误输入：SELECT sno,cno FROM score WHERE degree IN (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3);
@@ -433,7 +434,7 @@ SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDE
 解决办法1：在LIMIT子查询外再套一层
 SELECT sno,cno FROM score WHERE degree IN
 (SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
-解决办法2：
+解决办法2：（写法不严谨，成绩并列的同学只能显示一个）
 SELECT sno,cno FROM (SELECT DISTINCT degree,sno,cno FROM score ORDER BY degree DESC LIMIT 3) AS foo;
 注意：AS foo特别重要，如果不加也会报错，因为需要给FROM后的SELECT语句构成表名
 
