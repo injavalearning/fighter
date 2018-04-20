@@ -7,8 +7,28 @@
 7、SELECT * FROM student ORDER BY class DESC;
 8、SELECT * FROM score ORDER BY cno,degree DESC;
 9、SELECT COUNT(sno) AS num_student FROM student WHERE class = "95031";
-10、
+10、SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 1);
+扩充：SELECT sno,cno FROM score WHERE degree IN
+     (SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
 11、SELECT AVG(degree) AS avg_degree FROM score WHERE cno = "3-105";
 12、SELECT AVG(degree) AS avg_degree FROM score WHERE cno LIKE '3%' GROUP BY cno HAVING COUNT(*) >= 5;
 13、
-14、
+14、SELECT student.sname,score.cno,score.degree FROM student LEFT JOIN score ON student.sno = score.sno;
+15、SELECT st.sno,c.cname,sc.degree FROM score sc RIGHT JOIN student st ON sc.sno = st.sno LEFT JOIN course c
+    ON sc.cno = c.cno;
+16、SELECT st.sname,c.cname,sc.degree FROM score sc RIGHT JOIN student st ON sc.sno = st.sno LEFT JOIN course c
+    ON c.cno = sc.cno;
+17、SELECT AVG(sc.degree) FROM student st JOIN score sc ON st.sno = sc.sno WHERE st.class = "95033";
+18、
+19、SELECT sno,degree FROM score WHERE degree > (SELECT degree FROM score WHERE sno = 109 and cno = "3-105")
+    and cno = "3-105";
+20、SELECT sno,COUNT(*) AS count_num FROM score WHERE degree < (SELECT MAX(degree) AS max_degree FROM score)
+    GROUP BY sno HAVING count_num>1;    写的有点问题
+21、SELECT sno,cno,degree FROM score WHERE degree > (SELECT degree FROM score WHERE sno = 109 and cno = "3-105");
+22、
+23、select sc.sno,sc.degree from score sc join course c on sc.cno = c.cno join teacher t on t.tno = c.tno
+    where t.tname = "张旭";
+24、SELECT t.tname FROM (SELECT cno,COUNT(cno) AS count_num FROM score GROUP BY cno HAVING count_num>5) AS foo
+    JOIN course c ON foo.cno = c.cno JOIN teacher t ON c.tno = t.tno;
+25、SELECT sno,sname FROM student WHERE class = "95033" OR class = "95031";
+26、

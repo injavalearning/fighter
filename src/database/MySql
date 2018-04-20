@@ -182,7 +182,7 @@ SELECT prod_id,prod_price,prod_name FROM products ORDER BY prod_price DESC,prod_
 DESC关键字只应用到直接位于其前面的列名。在上例中，只对prod_price列指定DESC，对prod_name列不指定。因此，prod_price列以
 降序排序，而prod_name列（在每个价格内）仍然按标准的升序排序。如果想在多个列上进行降序排序，必须对每个列指定DESC关键字。
 使用ORDER BY和LIMIT的组合，能够找出一个列中最高或最低的值，例如：
-SELECT prod_price FROM products ORDER BY prod_price DESC,LIMIT 1;
+SELECT prod_price FROM products ORDER BY prod_price DESC LIMIT 1;
 +------------+
 | prod_price |
 +------------+
@@ -404,15 +404,136 @@ SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id HAVING COUNT
 WHERE在数据分组前进行过滤，HAVING在数据分组后进行过滤。
 
 
-七：表连接
+七：子查询
+可以把一条SELECT语句返回的结果用于另一条SELECT语句的WHERE子句。
+例如：
+输入1： SELECT order_num FROM orderitems WHERE prod_id = 'TNT';
+输出1：+-------------+
+       |  order_num  |
+       +-------------+
+       |     20005   |
+       |     20007   |
+       +-------------+
+输入2：SELECT cust_id FROM orders WHERE order_num IN (20005,20007);
+输出2：+-------------+
+       |   cust_id   |
+       +-------------+
+       |     10001   |
+       |     10004   |
+       +-------------+
+可以组合两个查询，第一个查询作为子查询
+SELECT cust_id FROM orders WHERE order_num IN (SELECT order_num FROM orderitems WHERE prod_id = 'TNT');
+
+查询最高分的学生学号和课程号
+SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 1);
+
+查询前三名的学生学号和课程号
+错误输入：SELECT sno,cno FROM score WHERE degree IN (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3);
+注意：在MySql中不能用上面这个语句，会报错：doesn't yet support 'LIMIT & IN/ALL/ANY/SOME subquery'
+解决办法1：在LIMIT子查询外再套一层
+SELECT sno,cno FROM score WHERE degree IN
+(SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
+解决办法2：
+SELECT sno,cno FROM (SELECT DISTINCT degree,sno,cno FROM score ORDER BY degree DESC LIMIT 3) AS foo;
+注意：AS foo特别重要，如果不加也会报错，因为需要给FROM后的SELECT语句构成表名
+
+
+八：表连接
     关系表的设计就是要保证把信息分解成多个表，一类数据一个表。各表通过某些常用的值（即关系设计中的关系（relational））互
 相关联。
+
 1、内连接（INNER JOIN）
-内连接使用比较运算符根据每个表共有的列的值匹配两个表中的行，INNER可以不写，则默认为内连接。
-SELECT vend_name,prod_name,prod_price FROM vendors INNER JOIN products ON vendors.vend_id = products.vend_id;
+内连接使用比较运算符根据每个表共有的列的值匹配两个表中的行，INNER可以不写，则默认为内连接。相当于对两表取交集。
+SELECT score.cno,course.cname,course.tno FROM score JOIN course ON score.cno = course.cno;
++-------+-----------------+-----+
+| cno   | cname           | tno |
++-------+-----------------+-----+
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 6-166 | 数据电路        | 856 |
+| 6-166 | 数据电路        | 856 |
++-------+-----------------+-----+
 
+2、左连接（LEFT JOIN）
+获取左表所有记录，即使右表没有对应匹配的记录。如果左表的某行在右表中没有匹配行，则在相关联的结果集行中右表显示为NULL。
+SELECT score.cno,course.cname,course.tno FROM score LEFT JOIN course ON score.cno = course.cno;
++-------+-----------------+------+
+| cno   | cname           | tno  |
++-------+-----------------+------+
+| 6-166 | 数据电路        | 856  |
+| 6-166 | 数据电路        | 856  |
+| 3-105 | 计算机导论      | 825  |
+| 3-105 | 计算机导论      | 825  |
+| 3-105 | 计算机导论      | 825  |
+| 3-105 | 计算机导论      | 825  |
+| 3-105 | 计算机导论      | 825  |
+| 3-105 | 计算机导论      | 825  |
+| 3-245 | NULL            | NULL |
+| 3-245 | NULL            | NULL |
+| 3-245 | NULL            | NULL |
+| 6-106 | NULL            | NULL |
++-------+-----------------+------+
 
+3、右连接（RIGHT JOIN）
+与LEFT JOIN相反，用于获取右表所有记录，即使左表没有对应匹配的记录。
+SELECT score.cno,course.cname,course.tno FROM score RIGHT JOIN course ON score.cno = course.cno;
++-------+-----------------+-----+
+| cno   | cname           | tno |
++-------+-----------------+-----+
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 6-166 | 数据电路        | 856 |
+| 6-166 | 数据电路        | 856 |
+| NULL  | 高等数学        | 100 |
++-------+-----------------+-----+
 
+4、全连接（FULL JOIN）
+返回左表和右表中的所有行。当某行在另一个表中没有匹配行时，则另一个表的选择列表列包含空值。MySql不支持全连接。
+
+5、表别名
+SELECT * FROM 表名 [AS] 别名;   为表指定别名，AS关键字可以省略不写
+SELECT * FROM teacher t;
++-----+--------+------+---------------------+-----------+-----------------+
+| TNO | TNAME  | TSEX | TBIRTHDAY           | PROF      | DEPART          |
++-----+--------+------+---------------------+-----------+-----------------+
+| 804 | 李诚   | 男   | 1958-12-02 00:00:00 | 副教授    | 计算机系        |
+| 856 | 张旭   | 男   | 1969-03-12 00:00:00 | 讲师      | 电子工程系      |
+| 825 | 王萍   | 女   | 1972-05-05 00:00:00 | 助教      | 计算机系        |
+| 831 | 刘冰   | 女   | 1977-08-14 00:00:00 | 助教      | 电子工程系      |
++-----+--------+------+---------------------+-----------+-----------------+
+SELECT a.cno,b.cname,b.tno FROM score a JOIN course b ON a.cno = b.cno;
++-------+-----------------+-----+
+| cno   | cname           | tno |
++-------+-----------------+-----+
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 3-105 | 计算机导论      | 825 |
+| 6-166 | 数据电路        | 856 |
+| 6-166 | 数据电路        | 856 |
++-------+-----------------+-----+
+
+6、使用带聚集函数的连接
+SELECT customers.cust_name,customers.cust_id,COUNT(orders.order_num) AS num_ord FROM customers JOIN orders
+ON customers.cust_id = orders.cust_id GROUP BY customers.cust_id;
++-----------+---------+---------+
+| cust_name | cust_id | num_ord |
++-----------+---------+---------+
+| Coyote Inc| 10001   |    2    |
+| Wascals   | 10003   |    1    |
+| Yosemite  | 10004   |    1    |
+| E Fudd    | 10005   |    1    |
++-----------+---------+---------+
 
 
 
