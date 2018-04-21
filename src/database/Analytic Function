@@ -1,6 +1,8 @@
 分析函数：
     分析函数是Oracle专门用于解决复杂报表统计需求的功能强大的函数，它可以在对数据进行分组然后计算基于组的某种统计值，
 并且每一组的每一行都可以返回一个统计值。
+    分析函数带有一个开窗函数over()，包含三个分析子句:分组(partition by), 排序(order by), 窗口(rows) ，他们的使用形式
+如下：over(partition by xxx order by yyy rows between zzz)。
 
 分析函数和聚集函数的不同：
     普通的聚集函数用group by分组，每个分组返回一个统计值；而分析函数采用partition by分组，它和聚集函数（如group by）
@@ -8,9 +10,10 @@
 partition by用于给结果集分组，如果没有指定那么它把整个结果集作为一个分组。
 partition by 与group by不同之处在于前者返回的是分组里的每一条数据，后者只能返回聚集之后的组的数据统计值的记录。
 
+一：ROW_NUMBER(),RANK()与DENSE_RANK()：求排序
 1、ROW_NUMBER() OVER(PARTITION BY COLUMN ORDER BY COLUMN)
-对表按某一列名分组，在每组中按某列名排序，然后基于每组显示每行的行号
-ROW_NUMBER()从1开始，为每一条分组记录返回一个数字，
+用作分组排序，对表按某一列名分组，在每组中按某列名排序，然后基于每组显示每行的行号
+ROW_NUMBER()从1开始，为每一条分组记录返回一个数字，row_number()值相同时排名不相等，其后排名连续不跳跃
 示例1： ROW_NUMBER() OVER(ORDER BY degree DESC)，先按分数降序排序，再显示行号
 degree      row_num
 100            1
@@ -45,6 +48,12 @@ empid      deptid       salary             rank
 8           50          6500.00              2
 SQL语句：SELECT *,ROW_NUMBER() OVER(PARTITION BY deptid ORDER BY salary DESC) rank FROM employee;
 
+2、RANK() OVER(PARTITION BY COLUMN ORDER BY COLUMN)
+类似ROW_NUMBER()，区别：rank()值相同时排名相同，其后排名跳跃不连续
 
+3、DENSE_RANK() OVER(PARTITION BY COLUMN ORDER BY COLUMN)
+类似ROW_NUMBER()，区别：dense_rank()值相同时排名相同，其后排名连续不跳跃
 
+二：lead和lag
+lag：访问一个分区或结果集中之前的一行，lead：访问一个分区或结果集中之后的一行。可以用于求增幅或者增比计算。
 
