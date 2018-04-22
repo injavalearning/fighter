@@ -612,6 +612,38 @@ SELECT sname,year(from_days(datediff(now(),sbirthday))) AS age from student;
 +--------+------+
 
 
+CASE WHEN THEN ELSE END：用作条件判断
+示例1：
+SELECT
+    case                   情况
+    when sex='1' then '男' sex='1'，则返回值'男'
+    when sex='2' then '女' sex='2'，则返回值'女'
+    else 0                 其他的返回'其他’
+    end                    结束
+FROM   sys_user;
+示例2：
+SELECT *,(CASE WHEN degree>=90 THEN "A" WHEN degree>=80 AND degree<90 THEN "B" WHEN degree>=70 AND degree<80
+THEN "C" WHEN degree>=60 AND degree<70 THEN "D" ELSE "E" END) AS grade FROM score;
++-----+-------+--------+-------+
+| SNO | CNO   | DEGREE | grade |
++-----+-------+--------+-------+
+| 103 | 3-245 |   86.0 | B     |
+| 105 | 3-245 |   75.0 | C     |
+| 109 | 3-245 |   68.0 | D     |
+| 103 | 3-105 |   92.0 | A     |
+| 105 | 3-105 |   88.0 | B     |
+| 109 | 3-105 |   76.0 | C     |
+| 101 | 3-105 |   64.0 | D     |
+| 107 | 3-105 |   91.0 | A     |
+| 108 | 3-105 |   78.0 | C     |
+| 101 | 6-166 |   85.0 | B     |
+| 107 | 6-106 |   79.0 | C     |
+| 108 | 6-166 |   81.0 | B     |
++-----+-------+--------+-------+
+
+
+
+
 
 
 事务：

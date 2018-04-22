@@ -20,7 +20,8 @@
 16、SELECT st.sname,c.cname,sc.degree FROM score sc RIGHT JOIN student st ON sc.sno = st.sno LEFT JOIN course c
     ON c.cno = sc.cno;
 17、SELECT AVG(sc.degree) AS avg_degree FROM student st JOIN score sc ON st.sno = sc.sno WHERE st.class = "95033";
-18、
+18、SELECT a.sno,a.cno,b.rank FROM score a,grade b WHERE a.degree BETWEEN b.low AND b.upp
+    ORDER BY rank;
 19、SELECT sno,degree FROM score WHERE degree > (SELECT degree FROM score WHERE sno = 109 and cno = "3-105")
     and cno = "3-105";
 20、SELECT sno,COUNT(*) AS count_num FROM score WHERE degree < (SELECT MAX(degree) AS max_degree FROM score)
