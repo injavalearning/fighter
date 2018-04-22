@@ -13,7 +13,7 @@
      (SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
 11、SELECT AVG(degree) AS avg_degree FROM score WHERE cno = "3-105";
 12、SELECT AVG(degree) AS avg_degree FROM score WHERE cno LIKE '3%' GROUP BY cno HAVING COUNT(*) >= 5;
-13、
+13、SELECT sno FROM score GROUP BY sno HAVING MAX(degree) < 90 AND MIN(degree) > 70;
 14、SELECT student.sname,score.cno,score.degree FROM student LEFT JOIN score ON student.sno = score.sno;
 15、SELECT st.sno,c.cname,sc.degree FROM score sc RIGHT JOIN student st ON sc.sno = st.sno LEFT JOIN course c
     ON sc.cno = c.cno;
@@ -26,7 +26,8 @@
 20、SELECT sno,COUNT(*) AS count_num FROM score WHERE degree < (SELECT MAX(degree) AS max_degree FROM score)
     GROUP BY sno HAVING count_num>1;    写的有点问题
 21、SELECT sno,cno,degree FROM score WHERE degree > (SELECT degree FROM score WHERE sno = 109 and cno = "3-105");
-22、
+22、SELECT sno,sname,sbirthday FROM student WHERE year(sbirthday) = (SELECT year(sbirthday) FROM student
+    WHERE sno = 105) AND sno != 105;
 23、SELECT sc.sno,sc.degree FROM score sc JOIN course c ON sc.cno = c.cno JOIN teacher t ON t.tno = c.tno
     WHERE t.tname = "张旭";
 24、SELECT t.tname FROM (SELECT cno,COUNT(cno) AS count_num FROM score GROUP BY cno HAVING count_num>5) AS foo
@@ -36,20 +37,23 @@
 27、SELECT sno,degree FROM (SELECT tno FROM teacher t WHERE depart = "计算机系") AS foo JOIN course c ON foo.tno =
     c.tno JOIN score s ON c.cno = s.cno;
 28、没明白题意
-29、
-30、
+29、SELECT a.* FROM score a WHERE cno = "3-105" AND degree >= (SELECT degree FROM score b WHERE cno = "3-245"
+    AND a.sno = b.sno) ORDER BY degree DESC;
+30、SELECT a.* FROM score a WHERE cno = "3-105" AND degree > (SELECT degree FROM score b WHERE cno = "3-245"
+    AND a.sno = b.sno);
 31、SELECT sname name,ssex sex,sbirthday birthday FROM student UNION SELECT tname name,tsex sex,tbirthday birthday
     FROM teacher;
 32、SELECT sname name,ssex sex,sbirthday birthday FROM student WHERE ssex = "女" UNION SELECT tname name,tsex sex,
     tbirthday birthday FROM teacher WHERE tsex = "女";
-33、
+33、SELECT a.* FROM score a WHERE degree < (SELECT AVG(degree) FROM score b WHERE a.cno = b.cno);    没做出来
 34、SELECT t.tname,t.depart FROM teacher t JOIN course c ON t.tno = c.tno;
 35、SELECT tname,depart FROM teacher WHERE tname NOT IN (SELECT t.tname FROM teacher t JOIN course c ON t.tno = c.tno);
 36、SELECT class,COUNT(*) AS count_num FROM student WHERE ssex = "男" GROUP BY class HAVING count_num >= 2;
 37、SELECT * FROM student WHERE sname NOT LIKE "王%";
-38、
-39、
-40、
+38、SELECT sname,year(from_days(datediff(now(),sbirthday))) AS age from student;
+39、SELECT MAX(sbirthday) AS birthday FROM student UNION SELECT MIN(sbirthday) AS birthday FROM student
+    ORDER BY birthday;
+40、SELECT * FROM student ORDER BY class DESC,sbirthday;
 41、SELECT t.tname,c.cname FROM teacher t LEFT JOIN course c ON t.tno = c.tno WHERE t.tsex = "男";
 42、SELECT * FROM score WHERE degree = (SELECT MAX(degree) AS max_degree FROM score);
 43、SELECT sname FROM student WHERE ssex = (SELECT ssex FROM student WHERE sname = "李军") AND sname != "李军";

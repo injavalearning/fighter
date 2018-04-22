@@ -580,6 +580,38 @@ UNION自带去重功能，会自动去除重复的行，如果想返回所有匹
 一部分，而又用另一种方式排序另一部分的情况，因此不允许使用多条ORDER BY子句。
 
 
+十：日期处理
+DATETIME格式的数据比如sbirthday 1977-08-14 00:00:00
+1、计算年、月、日
+year()用于计算日期的年，month()用于计算日期的月，day()用于计算日期的日
+示例：查询和学号为105的同学同年出生的所有学生的Sno、Sname和Sbirthday列。
+SELECT sno,sname,sbirthday FROM student WHERE year(sbirthday) = (SELECT year(sbirthday) FROM student WHERE sno = 105)
+AND sno != 105;
++-----+--------+---------------------+
+| sno | sname  | sbirthday           |
++-----+--------+---------------------+
+| 109 | 王芳   | 1975-02-10 00:00:00 |
++-----+--------+---------------------+
+2、根据出生日期计算年龄
+year(from_days(datediff(now(),sbirthday)))
+now() 当前时间,精确到秒
+datediff(begindate,enddate) 返回两日期之间相关的天数
+from_days(days) 给一个天数days，返回一个date值
+year(date):获取日期上的年
+示例：查询Student表中每个学生的姓名和年龄。
+SELECT sname,year(from_days(datediff(now(),sbirthday))) AS age from student;
++--------+------+
+| sname  | age  |
++--------+------+
+| 曾华   |   40 |
+| 匡明   |   42 |
+| 王丽   |   42 |
+| 李军   |   42 |
+| 王芳   |   43 |
+| 陆君   |   43 |
++--------+------+
+
+
 
 
 事务：
