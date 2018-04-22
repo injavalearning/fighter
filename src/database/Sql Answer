@@ -8,6 +8,7 @@
 8、SELECT * FROM score ORDER BY cno,degree DESC;
 9、SELECT COUNT(sno) AS num_student FROM student WHERE class = "95031";
 10、SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 1);
+或者：SELECT sno,cno FROM score WHERE degree = (SELECT MAX(degree) AS max_degree FROM score);
 扩充：SELECT sno,cno FROM score WHERE degree IN
      (SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
 11、SELECT AVG(degree) AS avg_degree FROM score WHERE cno = "3-105";
@@ -18,7 +19,7 @@
     ON sc.cno = c.cno;
 16、SELECT st.sname,c.cname,sc.degree FROM score sc RIGHT JOIN student st ON sc.sno = st.sno LEFT JOIN course c
     ON c.cno = sc.cno;
-17、SELECT AVG(sc.degree) FROM student st JOIN score sc ON st.sno = sc.sno WHERE st.class = "95033";
+17、SELECT AVG(sc.degree) AS avg_degree FROM student st JOIN score sc ON st.sno = sc.sno WHERE st.class = "95033";
 18、
 19、SELECT sno,degree FROM score WHERE degree > (SELECT degree FROM score WHERE sno = 109 and cno = "3-105")
     and cno = "3-105";
@@ -37,3 +38,22 @@
 28、没明白题意
 29、
 30、
+31、SELECT sname name,ssex sex,sbirthday birthday FROM student UNION SELECT tname name,tsex sex,tbirthday birthday
+    FROM teacher;
+32、SELECT sname name,ssex sex,sbirthday birthday FROM student WHERE ssex = "女" UNION SELECT tname name,tsex sex,
+    tbirthday birthday FROM teacher WHERE tsex = "女";
+33、
+34、SELECT t.tname,t.depart FROM teacher t JOIN course c ON t.tno = c.tno;
+35、SELECT tname,depart FROM teacher WHERE tname NOT IN (SELECT t.tname FROM teacher t JOIN course c ON t.tno = c.tno);
+36、SELECT class,COUNT(*) AS count_num FROM student WHERE ssex = "男" GROUP BY class HAVING count_num >= 2;
+37、SELECT * FROM student WHERE sname NOT LIKE "王%";
+38、
+39、
+40、
+41、SELECT t.tname,c.cname FROM teacher t LEFT JOIN course c ON t.tno = c.tno WHERE t.tsex = "男";
+42、SELECT * FROM score WHERE degree = (SELECT MAX(degree) AS max_degree FROM score);
+43、SELECT sname FROM student WHERE ssex = (SELECT ssex FROM student WHERE sname = "李军") AND sname != "李军";
+44、SELECT sname FROM student WHERE ssex = (SELECT ssex FROM student WHERE sname = "李军")
+    AND class = (SELECT class FROM student WHERE sname = "李军") AND sname != "李军";
+45、SELECT st.sname,sc.degree FROM score sc JOIN student st ON sc.sno = st.sno JOIN course c
+    ON c.cno = sc.cno WHERE c.cname = "计算机导论" AND st.ssex = "男";

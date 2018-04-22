@@ -54,6 +54,35 @@ SQL语句：SELECT *,ROW_NUMBER() OVER(PARTITION BY deptid ORDER BY salary DESC)
 3、DENSE_RANK() OVER(PARTITION BY COLUMN ORDER BY COLUMN)
 类似ROW_NUMBER()，区别：dense_rank()值相同时排名相同，其后排名连续不跳跃
 
-二：lead和lag
-lag：访问一个分区或结果集中之前的一行，lead：访问一个分区或结果集中之后的一行。可以用于求增幅或者增比计算。
+二：LEAD和LAG
+LAG：访问一个分区或结果集中前面的行，LEAD：访问一个分区或结果集中后面的行。可以用于求增幅或者增比计算。
+LAG(EXPRESSION, OFFSET, DEFAULT) OVER(PARTITION BY COLUMN ORDER BY COLUMN)
+LEAD(EXPRESSION, OFFSET, DEFAULT) OVER(PARTITION BY COLUMN ORDER BY COLUMN)
+LAG和LEAD有三个参数，第一个参数是列名，第二个参数是偏移量，第三个参数指定了默认值，可以指定一个其它的返回值来修改。
+例如：
+SELECT year,week,sale,LAG(sale,1,sale) OVER(PARTITION BY sf.product ORDER BY sf.year,sf.week) prior_wk_sales
+FROM sales_fact sf;
+ year  week    sale        prior_wk_sales
+-----------------------------------------
+ 1998    1     58.15          58.15
+ 1998    2     29.39          58.15
+ 1998    3     29.49          29.39
+ 1998    4     29.49          29.49
+ 1998    5     29.80          29.49
+ 1998    6     58.78           29.8
+ 1998    9     58.78          58.78
+ 1998   10    117.76          58.78
+ 1998   12     59.60         117.76
+ ...
 
+三：FIRST_VALUE和LAST_VALUE
+FIRST_VALUE和LAST_VALUE常用在计算排过序的结果集中的最大值和最小值。
+FIRST_VALUE(expression) OVER(PARTITION BY COLUMN ORDER BY COLUMN WINDOWING clause)
+例如：SELECT year,week,sale,FIRST_VALUE(sale) OVER(PARTITION BY sf.product ORDER BY sf.year,sf.week rows between
+unbounded preceding and unbounded following) prior_wk_sales FROM sales_fact sf;
+窗口的上下边界条件通过子句rows between unbounded preceding and unbounded following指定。这是开窗子句，意思是处理数据的
+范围为指定分区内的所有数据（从无限向前到无限向后）
+
+四：NTH_VALUE
+nth_value，可以获取排过序的结果集中的任意一行，而不仅是第一行或最后一行。
+first_value = nth_value(column_name,1)

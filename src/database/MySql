@@ -83,11 +83,11 @@ DROP TABLE customers;
 RENAME TABLE customers2 TO customers;
 
 
-二：插入数据
-1、插入完整的行
-
-
-
+二：插入、更新和删除数据
+插入：INSERT INTO student (sno,sname,ssex,sbirthday,class) VALUES (108 ,'曾华','男' ,'1977-09-01',95033);
+更新单个列：UPDATE customers SET cust_email = "elm@fudd.com" WHERE cust_id = 10005;
+更新多个列：UPDATE customers SET cust_name = "curry",cust_email = "elm@fudd.com" WHERE cust_id = 10005;
+删除：DELETE FROM customers WHERE cust_id = 10006; 删除单个行
 
 
 三：检索数据：
@@ -535,6 +535,49 @@ ON customers.cust_id = orders.cust_id GROUP BY customers.cust_id;
 | Yosemite  | 10004   |    1    |
 | E Fudd    | 10005   |    1    |
 +-----------+---------+---------+
+
+
+九：组合查询
+MySQL允许执行多个查询（多条SELECT语句），并将结果作为单个查询结果集返回。这些组合查询通常称为并（union）或复合查询。
+UNION必须由两条或两条以上的SELECT语句组成，语句之间用关键字UNION分隔。
+UNION中的每个查询必须包含相同的列、表达式或聚集函数（不过各个列不需要以相同的次序列出）。
+例如：查询所有教师和同学的name、sex和birthday，
+错误写法：（教师列名会不显示，应该取个相同的别名）
+SELECT sname,ssex,sbirthday FROM student UNION SELECT tname,tsex,tbirthday FROM teacher;
++--------+------+---------------------+
+| sname  | ssex | sbirthday           |
++--------+------+---------------------+
+| 曾华   | 男   | 1977-09-01 00:00:00 |
+| 匡明   | 男   | 1975-10-02 00:00:00 |
+| 王丽   | 女   | 1976-01-23 00:00:00 |
+| 李军   | 男   | 1976-02-20 00:00:00 |
+| 王芳   | 女   | 1975-02-10 00:00:00 |
+| 陆君   | 男   | 1974-06-03 00:00:00 |
+| 李诚   | 男   | 1958-12-02 00:00:00 |
+| 张旭   | 男   | 1969-03-12 00:00:00 |
+| 王萍   | 女   | 1972-05-05 00:00:00 |
+| 刘冰   | 女   | 1977-08-14 00:00:00 |
++--------+------+---------------------+
+正确写法：
+SELECT sname name,ssex sex,sbirthday birthday FROM student UNION SELECT tname name,tsex sex,tbirthday birthday
+FROM teacher;
++--------+-----+---------------------+
+| name   | sex | birthday            |
++--------+-----+---------------------+
+| 曾华   | 男  | 1977-09-01 00:00:00 |
+| 匡明   | 男  | 1975-10-02 00:00:00 |
+| 王丽   | 女  | 1976-01-23 00:00:00 |
+| 李军   | 男  | 1976-02-20 00:00:00 |
+| 王芳   | 女  | 1975-02-10 00:00:00 |
+| 陆君   | 男  | 1974-06-03 00:00:00 |
+| 李诚   | 男  | 1958-12-02 00:00:00 |
+| 张旭   | 男  | 1969-03-12 00:00:00 |
+| 王萍   | 女  | 1972-05-05 00:00:00 |
+| 刘冰   | 女  | 1977-08-14 00:00:00 |
++--------+-----+---------------------+
+UNION自带去重功能，会自动去除重复的行，如果想返回所有匹配行，可以用UNION ALL。
+在用UNION组合查询时，只能使用一条ORDER BY子句，它必须出现在最后一条SELECT语句之后。对于结果集，不存在用一种方式排序
+一部分，而又用另一种方式排序另一部分的情况，因此不允许使用多条ORDER BY子句。
 
 
 
