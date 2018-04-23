@@ -69,11 +69,9 @@ DEFAULT默认值，如果在插入行时没有给出值，MySQL允许指定此�
 使用ALTER TABLE更改表结构，可以分两行：
 1、在ALTER TABLE之后给出要更改的表名（该表必须存在，否则将出错）
 2、所做更改的列表
-ALTER TABLE vendors
-ADD vend_phone char(20);
+ALTER TABLE vendors ADD vend_phone char(20);
 这条语句给vendors表增加一个名为vend_phone的列，必须明确其数据类型。
-ALTER TABLE vendors
-DROP COLUMN vend_phone;
+ALTER TABLE vendors DROP COLUMN vend_phone;
 删除刚刚添加的列
 
 4、删除表：
@@ -392,6 +390,7 @@ SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id;
 |    1005    |         2    |
 +------------+--------------+
 GROUP BY子句指示MySQL分组数据，然后对每个组而不是整个结果集进行聚集。
+可以先分大组，在每个大组里再分小组，即 GROUP BY column1,column2;
 
 2、HAVING过滤分组（不同于WHERE，WHERE是过滤行，HAVING是过滤分组）
 SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id HAVING COUNT(*) > 2;

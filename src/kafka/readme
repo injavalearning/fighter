@@ -33,4 +33,7 @@ kafka集群的指挥中心，其他Broker则听从Controller指挥实现相应�
 监听zookeeper中数据的变化。Controller也是一主多从的实现，所有Broker都会监听Controller Leader的状态，当Controller Leader
 出现故障时会重新选举新的Controller Leader。
 
+ack和at least once这些没关系
+
+
 

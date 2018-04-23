@@ -62,3 +62,12 @@
     AND class = (SELECT class FROM student WHERE sname = "李军") AND sname != "李军";
 45、SELECT st.sname,sc.degree FROM score sc JOIN student st ON sc.sno = st.sno JOIN course c
     ON c.cno = sc.cno WHERE c.cname = "计算机导论" AND st.ssex = "男";
+46、SELECT t.tname,sc.cno,AVG(degree) AS avg_degree FROM teacher t JOIN course c ON t.tno = c.tno JOIN score sc
+    ON sc.cno = c.cno GROUP BY t.tname,sc.cno;
+    +--------+-------+------------+
+    | tname  | cno   | avg_degree |
+    +--------+-------+------------+
+    | 张旭   | 6-166 |   83.00000 |
+    | 王萍   | 3-105 |   81.50000 |
+    +--------+-------+------------+
+    我最开始不知道GROUP BY后可以跟多个字段，然后只GROUP BY sc.cno，结果没法显示tname列
