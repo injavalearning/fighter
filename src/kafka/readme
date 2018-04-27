@@ -7,6 +7,8 @@ kafka集群的可用性。
     在一个分区的Leader副本中会维护自身以及所有Follower副本的相关状态，而Follower副本只维护自己的状态。
     Follower副本可以批量的从Leader副本复制消息，加快了网络I/O，Follower副本在更新消息时是批量写磁盘，加速了磁盘的I/O，
 极大减少了Follower与Leader的差距。
+    Follower从Leader拉取消息，写入本地log后向Leader发送ACK，Leader收到所有ISR中的replica的ACK后，增加HW，并向producer
+发送ACK。
 
 ISR集合：
     ISR（In-Sync Replica）已同步的副本，表示的是目前“可用（alive）”且消息量与Leader相差不多（能够catch-up）的副本集合，
@@ -33,7 +35,22 @@ kafka集群的指挥中心，其他Broker则听从Controller指挥实现相应�
 监听zookeeper中数据的变化。Controller也是一主多从的实现，所有Broker都会监听Controller Leader的状态，当Controller Leader
 出现故障时会重新选举新的Controller Leader。
 
-ack和at least once这些没关系
+ACK 和传递保证语义别混淆：
+ACK：ACK是生产者的机制
+producer有个ack参数，有三个值 -1,1和0
+同步模式(ack = -1)：leader和所有ISR副本集合中的follower都写成功才回复生产者。kafka默认-1
+异步模式(ack = 1)：leader写入成功即可回复生产者，不用等followers的响应。
+低延迟模式(ack = 0)：producer一旦发布消息就认为该条消息已经被写入，不用再等响应。
+
+传递保证语义：
+消息在producer和consumer之间传输的传递保证语义有三个级别：
+At most once：消息可能会丢，但绝不会重复传递。
+At least once：消息绝不会丢，但可能会重复传递。
+Exactly once：每条消息只会被传递一次。
+如果通过kafka传递的消息是幂等性的（一条消息被反复消费多次并不会对计算结果产生影响），使用At least once语义没有问题。
+Exactly once语义由生产者和消费者两部分共同决定：首先生产者要保证不会产生重复的消息，其次消费者不能重复拉取相同的消息。
+
+
 
 
 
