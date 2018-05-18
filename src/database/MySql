@@ -114,6 +114,7 @@ RENAME TABLE customers2 TO customers;
 
 2、DISTINCT关键字：只返回不同值的Ssex行，例如：检索一个列（供应商ID），这个列有很多重复值，我不想每个值每次都出现，
 只需要知道有哪几家供应商。
+注意：DISTINCT后跟多个列时，是对多个列的组合结果进行去重，并不能针对单列去重
 SELECT DISTINCT Ssex FROM student;
 +------+
 | Ssex |
@@ -433,12 +434,10 @@ SELECT sno,cno FROM score WHERE degree = (SELECT DISTINCT degree FROM score ORDE
 查询前三名的学生学号和课程号
 错误输入：SELECT sno,cno FROM score WHERE degree IN (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3);
 注意：在MySql中不能用上面这个语句，会报错：doesn't yet support 'LIMIT & IN/ALL/ANY/SOME subquery'
-解决办法1：在LIMIT子查询外再套一层
+解决办法：在LIMIT子查询外再套一层
 SELECT sno,cno FROM score WHERE degree IN
 (SELECT * FROM (SELECT DISTINCT degree FROM score ORDER BY degree DESC LIMIT 3) AS foo) ORDER BY degree DESC;
-解决办法2：（写法不严谨，成绩并列的同学只能显示一个）
-SELECT sno,cno FROM (SELECT DISTINCT degree,sno,cno FROM score ORDER BY degree DESC LIMIT 3) AS foo;
-注意：AS foo特别重要，如果不加也会报错，因为需要给FROM后的SELECT语句构成表名
+
 
 
 八：表连接
