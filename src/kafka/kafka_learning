@@ -2,10 +2,10 @@ Kafka：分布式发布订阅消息系统
 
 Topic：
     在Kafka中表示一类消息的存储容器，一个Topic可以分布在多个Broker上，同时每个Broker中都会有这个Topic的一份副本，用于
-当集群中的一个Broker宕机时，转移到另一个Broker上继续工作。
+当集群中的一个Broker宕机时，转移到另一个Broker上继续工作。Topic是逻辑概念，表示存储的是这一类主题的数据。
 Partition：
     是消息存储的最小容器，一个Topic至少一个Partition。在Topic中，每个Partition都映射到一个逻辑日志文件，这个日志文件被
-表示为一系列等大小的物理文件夹，每一个Partition都是有序且不可变的文件序列。
+表示为一系列等大小的物理文件夹，每一个Partition都是有序且不可变的文件序列。Partition是物理概念，是真正存储数据的容器。
 Offset：
     消息在Partition中的编号，编号顺序不跨Partition
 Producer：
@@ -55,6 +55,7 @@ Leader副本都会维护此分区的ISR集合，写请求首先由Leader副本�
     PS：延迟时间可以理解为producer往leader中发送了message后，针对每个message有个计时器，如果超过一定的时间follower还
 没有从leader上拉取这个message，则认为延迟时间超过阈值。
 
+
 HW & LEO：
     HW（HighWatermark，高水位），HW标记了一个特殊的offset，当消费者处理消息的时候，只能拉取到HW之前的消息，HW之后的消息
 对消费者来说是不可见的。HW也是由Leader副本管理的，当ISR集合中全部的Follower副本都拉取HW指定消息进行同步后，Leader副本
@@ -64,11 +65,13 @@ HW & LEO：
 Leader副本追加消息的时候，Leader副本的LEO标记会递增；当Follower副本成功从Leader副本拉取消息并更新到本地的时候，Follower
 副本的LEO就会增加。
 
+
 Cluster & Controller：
     多个Broker可以做成一个Cluster（集群）对外提供服务，每个Cluster当中会选举出一个Broker来担任Controller，Controller是
 kafka集群的指挥中心，其他Broker则听从Controller指挥实现相应的功能。Controller负责管理整个集群中分区和分区中副本的状态、
 监听zookeeper中数据的变化。Controller也是一主多从的实现，所有Broker都会监听Controller Leader的状态，当Controller Leader
 出现故障时会重新选举新的Controller Leader。
+
 
 ACK 和传递保证语义别混淆：
 ACK：ACK是生产者的机制
@@ -76,6 +79,7 @@ producer有个ack参数，有三个值 -1,1和0
 同步模式(ack = -1)：leader和所有ISR副本集合中的follower都写成功才回复生产者。kafka默认-1
 异步模式(ack = 1)：leader写入成功即可回复生产者，不用等followers的响应。
 低延迟模式(ack = 0)：producer一旦发布消息就认为该条消息已经被写入，不用再等响应。
+
 
 传递保证语义：
 消息在producer和consumer之间传输的传递保证语义有三个级别：
