@@ -1,0 +1,136 @@
+可重入锁：同一线程访问外层函数获得锁之后，访问内层函数会自动获取内层函数的锁
+
+
+先看一个示例：
+public class Test implements Runnable {
+
+    ReentrantLock lock = new ReentrantLock();
+
+    public void get() {
+        lock.lock();
+        System.out.println(Thread.currentThread().getId());
+        set();
+        lock.unlock();
+    }
+
+    //如果ReentrantLock是不可重入锁，那么set()方法可能不会被当前线程执行
+    public void set() {
+        lock.lock();
+        System.out.println(Thread.currentThread().getId());
+        lock.unlock();
+    }
+
+    @Override
+    public void run() {
+        get();
+    }
+
+    public static void main(String[] args) {
+        Test ss = new Test();
+
+        new Thread(ss).start();
+        new Thread(ss).start();
+        new Thread(ss).start();
+    }
+}
+结果为：
+10
+10
+11
+11
+12
+12
+
+
+下面设计了一种不可重入锁：
+public class Lock{
+
+    private boolean isLocked = false;
+
+    public synchronized void lock() throws InterruptedException{
+        while(isLocked){
+            wait();
+        }
+        isLocked = true;
+    }
+
+    public synchronized void unlock(){
+        isLocked = false;
+        notify();
+    }
+}
+
+为什么是不可重入锁？举个例子：
+public class Count{
+
+    Lock lock = new Lock();
+
+    public void print(){
+        lock.lock();
+        doAdd();
+        lock.unlock();
+    }
+
+    public void doAdd(){
+        lock.lock();
+        //do something
+        lock.unlock();
+    }
+}
+
+当调用print()方法时，获得了锁，这时就无法再调用doAdd()方法，这时必须先释放锁才能调用，所以称这种锁为不可重入锁，也叫自旋锁
+
+
+下面设计了一种可重入锁：
+public class Lock{
+
+    boolean isLocked = false;
+    Thread  lockedBy = null;
+    int lockedCount = 0;
+
+    public synchronized void lock() throws InterruptedException{
+        Thread thread = Thread.currentThread();
+        while(isLocked && lockedBy != thread){
+            wait();
+        }
+        isLocked = true;
+        lockedCount++;
+        lockedBy = thread;
+    }
+
+    public synchronized void unlock(){
+        if(Thread.currentThread() == this.lockedBy){
+            lockedCount--;
+            if(lockedCount == 0){
+                isLocked = false;
+                notify();
+            }
+        }
+    }
+}
+
+可重入锁的实现原理是通过为每个锁关联一个请求计数器和一个占有它的线程。当计数为0时，认为锁是未被占有的；线程请求一个未被占有的锁时，
+JVM将记录锁的占有者，并且将请求计数器置为1。如果同一个线程再次请求这个锁，计数将递增；每次占用线程退出同步块，计数器值将递减。
+直到计数器为0,锁被释放。
+
+
+可重入锁如何避免死锁：
+先看示例：
+public class Widget {
+    public synchronized void doSomething(){
+        // do something
+    }
+}
+
+public class LoggingWidget extends Widget {
+    public synchronized void doSomething() {
+        super.doSomething();
+    }
+}
+
+synchronized标记的同步是要绑定一个对象的，不写的话实际上实际上就是synchronized(this)，即绑定当前对象，这个this对象就是锁
+(synchronized中可以认为就是监视器)，当LoggingWidget执行doSomething的时候获得了这把锁(this)，那么他去调用父类(Widget)的
+doSomething的时候，父类的doSomething方法也要得到这个锁(this)，但是子类的这个方法还没有运行完毕，所以还持有这个锁，父类方法在等，
+子类不释放锁还拼命的让父类方法执行，却不知道父类方法在眼巴巴的等着这个锁，这样就死锁了。
+https://www.cnblogs.com/noodleprince/p/8722356.html
+https://bbs.csdn.net/topics/390448594?page=1
