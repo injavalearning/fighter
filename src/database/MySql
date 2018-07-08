@@ -395,7 +395,8 @@ GROUP BY后跟的字段要在SELECT里写出来，即SELECT a .....  GROUP BY a;
 可以先分大组，在每个大组里再分小组，即 GROUP BY column1,column2;
 GROUP BY和聚集函数结合能够达到去重的作用（WordCount，先对word进行groupby分组，之后进行count操作，结果集中同一个word只
 出现一次）
-GROUP BY自己单独用也能去重，比如 select order_id from db.表名 group by order_id; 能对order_id去重，但是select后只能跟order_id
+GROUP BY自己单独用也能去重，比如 select order_id from db.表名 group by order_id; 能对order_id去重，但是select后只能跟
+order_id
 
 2、HAVING过滤分组（不同于WHERE，WHERE是过滤行，HAVING是过滤分组）
 SELECT vend_id,COUNT(*) AS num_prods FROM products GROUP BY vend_id HAVING COUNT(*) > 2;
