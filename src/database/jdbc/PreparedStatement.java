@@ -1,8 +1,11 @@
-package database;
+package database.jdbc;
 
 import java.sql.*;
 
-public class MysqlConnectDemo {
+/**
+ * PreparedStatement的方式
+ */
+public class PreparedStatement {
     // JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://192.168.1.105:3306/school";
@@ -13,7 +16,7 @@ public class MysqlConnectDemo {
 
     public static void main(String[] args){
         Connection connection = null;
-        Statement statement = null;
+        java.sql.PreparedStatement ps = null;
 
         try{
             //注册JDBC驱动
@@ -24,10 +27,13 @@ public class MysqlConnectDemo {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
 
             //执行查询
-            statement = connection.createStatement();
             String sql;
-            sql = "select sno, cno, degree from score";
-            ResultSet set = statement.executeQuery(sql);
+            sql = "select sno, cno, degree from score where sno = ? and cno = ?";
+            ps = connection.prepareStatement(sql);
+            ps.setString(1, "xxx");
+            ps.setString(2, "xxx");
+
+            ResultSet set = ps.executeQuery();
 
             //打印查询结果
             while(set.next()){
@@ -42,7 +48,7 @@ public class MysqlConnectDemo {
 
             //关闭连接
             set.close();
-            statement.close();
+            ps.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();

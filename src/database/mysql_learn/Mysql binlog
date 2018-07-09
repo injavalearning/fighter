@@ -1,0 +1,38 @@
+binlog：
+    二进制文件，用于记录对数据库内容修改的信息，包括增(insert)、删(delete)、改(update)，是mysql的组件之一，用于数据库
+备份和数据恢复。
+
+
+
+binlog示例：
+binlog:
+{
+    "xid": "18994885768",
+    "binlog": "492634100@dd-bin.010697",
+    "time": 1526864759000,
+    "canalTime": 1526864759764,
+    "db": "dos_order",
+    "table": "d_order_base_0531",
+    "event": "d",
+    "columns": [
+        {
+            "n": "xid",
+            "t": "decimal(10,6)",
+            "v": "119.052460",
+            "null": false
+        },
+        {
+            "n": "order_id",
+            "t": "bigint(20) unsigned",
+            "v": "17600362962233",
+            "null": false
+        },
+        {
+            "n": "passenger_id",
+            "t": "bigint(20)",
+            "v": "2890046907708",
+            "null": false
+        }
+    ],
+    "keys": ["order_id"]
+}
