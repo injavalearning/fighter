@@ -1,11 +1,12 @@
 package database.jdbc;
 
+import java.math.BigDecimal;
 import java.sql.*;
 
 /**
- * PreparedStatement的方式
+ * Statement的方式
  */
-public class PreparedStatement {
+public class StatementDemo {
     // JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://192.168.1.105:3306/school";
@@ -16,7 +17,7 @@ public class PreparedStatement {
 
     public static void main(String[] args){
         Connection connection = null;
-        java.sql.PreparedStatement ps = null;
+        java.sql.Statement statement = null;
 
         try{
             //注册JDBC驱动
@@ -27,19 +28,17 @@ public class PreparedStatement {
             connection = DriverManager.getConnection(DB_URL, USER, PASS);
 
             //执行查询
+            statement = connection.createStatement();
             String sql;
-            sql = "select sno, cno, degree from score where sno = ? and cno = ?";
-            ps = connection.prepareStatement(sql);
-            ps.setString(1, "xxx");
-            ps.setString(2, "xxx");
+            sql = "select sno, cno, degree from score";
 
-            ResultSet set = ps.executeQuery();
+            ResultSet set = statement.executeQuery(sql);
 
             //打印查询结果
             while(set.next()){
                 String sno = set.getString("sno");
                 String cno = set.getString("cno");
-                String degree = set.getString("degree");
+                BigDecimal degree = set.getBigDecimal("degree");
 
                 System.out.print("sno:" + sno);
                 System.out.print("，cno：" + cno);
@@ -48,7 +47,7 @@ public class PreparedStatement {
 
             //关闭连接
             set.close();
-            ps.close();
+            statement.close();
             connection.close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -1,5 +1,12 @@
 第三部分：虚拟机执行子系统
 
+第6章：类文件结构
+    计算机只认识0和1，所以我们写的程序需要经编译器翻译成由0和1构成的二进制格式才能由计算机执行。Java虚拟机不和包括java在
+内的任何语言绑定，它只与"Class文件"这种特定的二进制文件格式所关联，Class文件中包含了Java虚拟机指令集和符号表以及若干其他
+辅助信息。使用JRuby和Groovy等语言的编译器也可以把程序代码编译成Class文件，虚拟机并不关心Class的来源是何种语言。
+
+
+
 HelloWorld的具体执行过程：
 1、执行HelloWorld.java文件，生成HelloWorld.class字节码文件。
 2、虚拟机执行HelloWorld.class，将这个类加载到内存中(即方法区的类代码区中)。
@@ -18,3 +25,7 @@ HelloWorld的具体执行过程：
     类从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期包括：加载（Loading）、验证（Verification）、
 准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unloading）7个阶段。其中
 验证、准备、解析3个部分统称为连接（Linking）。
+
+二：类加载的过程：
+1、加载：
+    
