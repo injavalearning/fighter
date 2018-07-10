@@ -4,8 +4,8 @@ JDBC：
 
 创建JDBC连接：
 1、注册并加载驱动：使用Class.forName()，驱动类就会注册到DriverManager里面并加载到内存里
-2、用DriverManager获取连接对象：调用DriverManager.getConnnection()方法并传入数据库连接的URL，用户名及密码，
-就能获取到连接对象
+2、用DriverManager获取连接对象：调用DriverManager.getConnnection()方法并传入数据库连接的URL，用户名及密码，就能获取到
+连接对象
 
 
 Statement：
@@ -16,14 +16,14 @@ Statement接口的所有execute方法开始执行时都默认会关闭当前打�
 
 
 PreparedStatement：
-    PreparedStatement对象代表的是一个预编译的SQL语句，用它提供的set方法可以传入查询的变量。一个PreparedStatement
-是从java.sql.connection对象和所提供的sql字符串得到的，sql字符串中包含问号(?)，这些问号标明变量的位置，然后通过
+    PreparedStatement对象代表的是一个预编译的SQL语句，用它提供的set方法可以传入查询的变量。一个PreparedStatement是从
+java.sql.connection对象和所提供的sql字符串得到的，sql字符串中包含问号(?)，这些问号标明变量的位置，然后通过
 PreparedStatement的set方法提供变量的值，最后执行语句。
     PreparedStatement有助于防止SQL注入，因为它会自动对特殊字符转义。PreparedStatement可以用来进行动态查询。
 
 
 ResultSet：
-    查询数据后会返回一个ResultSet，它就像是查询结果集的一张数据表。ResultSet对象维护了一个游标，指向当前的数据行。
-开始的时候这个游标指向的是第一行，如果调用了ResultSet的next()方法游标会下移一行，如果没有更多的数据了，next()方法会返回false。
-可以在for循环中用它来遍历数据集。
+    查询数据后会返回一个ResultSet，它就像是查询结果集的一张数据表。ResultSet对象维护了一个游标，指向当前的数据行。开始
+的时候这个游标指向的是第一行，如果调用了ResultSet的next()方法游标会下移一行，如果没有更多的数据了，next()方法会返回
+false。可以在for循环中用它来遍历数据集。
 
