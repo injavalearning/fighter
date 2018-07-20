@@ -22,7 +22,7 @@ HashTable和HashMap的区别：
 6、HashTable中hash数组默认大小是11，增加的方式是 old*2+1，HashMap中hash数组的默认大小是16，而且一定是2的幂。
 
 ConcurrentHashMap：
-    锁分段技术：首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一个段数据的时候，
+    锁分段技术：首先将数据分成一段一段的存储，然后给每一段数据配一把锁，当一个线程占用锁访问其中一段数据的时候，
 其他段的数据也能被其他线程访问。
     ConcurrentHashMap由Segment数组结构和HashEntry数组结构组成，是线程安全的。Segment是一种可重入锁ReentrantLock，
 在ConcurrentHashMap里扮演锁的角色，HashEntry则用于存储键值对数据。一个ConcurrentHashMap里包含一个Segment数组，
