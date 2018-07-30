@@ -1,6 +1,6 @@
 Java基本语法及关键字：
 
-数据类型：
+一、数据类型
     Java有8种基本类型，其中有4种整型、2种浮点型、1种char型，1种boolean型。
     int：4 字节（1字节为8位），范围 -2147483648（-2^31）— 2147483647（2^31-1）（21亿，切记：一些编程题可能需要用long）
     short：2 字节，范围 -32768 — 32767
@@ -15,7 +15,7 @@ Java基本语法及关键字：
         正数部分为：0111 1111，为0 — 2^7-1
 
 
-static关键字：
+二、static关键字
     static表示静态，它可以修饰变量、方法和代码块，被static修饰的成员称为静态成员或类成员，它属于整个类所有，而不是某个
 对象所有，即被类的所有对象所共享。类中标注了static的变量或方法能在类外直接引用，即通过类名.静态变量 或类名.静态方法
 来引用，而没有标注static的变量或方法则必须声明这个类的实体，由实体来引用。
@@ -30,8 +30,38 @@ static关键字：
 变量/方法，因为这时候没有对象实例，所以会报错）。非static方法内部可以访问static成员的方法和变量。
 
 
+三、String、StringBuffer、StringBuilder
+1、三者的区别：
+①：都是final类，都不允许被继承
+②：String长度是不可变的，StringBuffer、StringBuilder长度是可变的
+③：StringBuffer是线程安全的，StringBuilder不是线程安全的，它们有相同的方法，StringBuffer在StringBuilder的方法上添加了
+synchronized修饰，保证线程安全
+④：执行速度：StringBuilder > StringBuffer > String，因为String是字符串常量，而StringBuffer和StringBuilder都是字符串
+变量，String对象一旦创建之后该对象是不可更改的，对String对象的任何改变都不影响到原对象，相关的任何操作都会生成新的对象；
+但后两者的对象是变量，是可以更改的
+
+2、对String不变性的理解：
+    String类是被final修饰的，不能被继承。一旦一个String对象在内存中创建，它就是不可改变的，所有的String类中方法并不是
+改变String对象自己，而是重新创建一个新的String对象，在用 + 连接字符串的时候也会创建新的字符串。
+
+3、String重写了Object的hashCode和toString吗？如果重写equals不重写hashCode会出现什么问题？
+    String重写了Object类的hashCode和toString方法，Object类的hashCode()返回对象的内存地址经过处理后的结构，String类的
+hashCode()返回哈希值；Object类的toString()方法返回该对象实现类的“类名 + @ + hashcode值”，String类的toString()方法
+返回这个字符串本身。
+    hashCode()和equals()都可以用来比较两个对象是否相等，重写的equals()一般比较全面比较复杂，效率比较低，而hashCode()
+只要生成一个hash值比较就可以了，效率比较高，但是并不是完全可靠，有时候不同的对象它们生成的hash值也会一样，所以：equals()
+相等的两个对象它们的hashCode()肯定相等；hashCode()相等的两个对象它们的equals()不一定相等。如果重写了equals()不重写
+hashCode()，将对象放入hash集合中时，因为两对象hashCode()不同，所以两个对象都会放入，但是这两个对象通过equals比较可能相等，
+也就是两对象值相等，这样就造成了集合中存储了两个值相同的对象，这种做法是错误的（HashMap的Key）。
+    注：HashSet和HashMap的存储机制：在存一个新对象的时候，先比较它跟已有对象的hashCode()是否相等，如果不等则直接存，不会
+再调用equals方法进行判断；如果相等则再通过equals判断两对象值是否相等。
+
+
+
 java中==和equals的区别：
-1、== 如果作用于基本数据类型的变量，直接比较值是否相等；如果作用于引用类型的变量，比较的是所指向的对象的地址(是否是同一个
-对象)。
+1、== 如果作用于基本数据类型的变量，直接比较值是否相等；如果作用于引用类型的变量，比较的是所指向的对象的地址(是否是同一
+个对象)。
 2、equals方法不能作用于基本数据类型的变量；如果没有对equals方法进行重写，则比较的是引用类型的变量所指向的对象的地址；
 String、Date等类对equals方法进行了重写，比较的是所指向的对象的内容是否相等。
+
+
