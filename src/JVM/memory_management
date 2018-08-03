@@ -156,4 +156,3 @@ To Survivor(1/10)。堆的大小可以通过 -Xms、-Xmx来指定，-Xms128m JVM
 3、jinfo：
     Java配置信息工具（Configuration Info for Java），作用是实时地查看和调整虚拟机各项参数。
 4、jmap：
-

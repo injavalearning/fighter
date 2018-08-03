@@ -26,7 +26,7 @@ HelloWorld的具体执行过程：
 准备（Preparation）、解析（Resolution）、初始化（Initialization）、使用（Using）和卸载（Unloading）7个阶段。其中
 验证、准备、解析3个部分统称为连接（Linking）。
 
-
+https://www.cnblogs.com/xdouby/p/5829423.html
 https://www.jianshu.com/p/ebaa1a03c594
 
 二：类加载的过程：
