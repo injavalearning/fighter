@@ -3,8 +3,11 @@
     <words>
       <w>baidu</w>
       <w>groupby</w>
+      <w>icmp</w>
+      <w>igmp</w>
       <w>inno</w>
       <w>isam</w>
+      <w>rarp</w>
       <w>rcvd</w>
     </words>
   </dictionary>
