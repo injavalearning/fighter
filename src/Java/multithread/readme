@@ -143,12 +143,19 @@ unLock()去释放锁，则很可能造成死锁现象，因此使用Lock时需�
 
 
 六、synchronized的底层实现
+1、synchronized(this)同步代码块：
     synchronized的底层是通过一个monitor（监视器锁）来实现相应的功能，每个对象有一个monitor，当monitor被占用时就会处于
 锁定状态。有两条指令monitorEnter和monitorExit，线程执行monitorEnter指令时尝试获取monitor的所有权，此时如果monitor的
 进入数为0，线程占有monitor并将进入数设置为1；如果线程已经占有monitor，只是重新进入，则将monitor的进入数加1；如果其他
 线程已经占用了monitor，则该线程进入阻塞状态，直到monitor的进入数为0，再重新尝试获取monitor的所有权。当monitor的所有者
 执行monitorExit指令时，monitor的进入数减1，如果减1后进入数为0，线程退出monitor，不再是这个monitor的所有者，其他被这个
 monitor阻塞的线程可以尝试去获取这个monitor的所有权。
+    注：这里的对象指的是synchronized后面括号中的对象
+2、同步方法
+    方法的同步并没有通过指令monitorEnter和monitorExit来完成，相比于普通方法，synchronized修饰的方法常量池中多了
+ACC_SYNCHRONIZED标示符，JVM就是根据这个标示符来实现方法的同步的。当方法被调用时，调用指令将会检查方法的ACC_SYNCHRONIZED
+访问标志是否被设置，如果设置了，执行线程将先获取monitor，获取成功之后才能执行方法体，方法执行完后再释放monitor。在方法
+执行期间，其他任何线程都无法再获得同一个monitor对象。
 
 
 七、sleep和wait的区别
