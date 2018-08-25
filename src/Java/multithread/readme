@@ -35,7 +35,7 @@ Java多线程：
         4、线程对象调用start方法，开启线程，线程会自动执行run方法
 
 方式二：1、实现Runnable接口
-           存放线程执行代码的类去实现(implements) Runnable接口
+           存放线程执行代码的类去实现（implements） Runnable接口
         2、重写所实现接口的run方法，并将线程执行代码存放在run方法中
         3、创建Thread对象，也就是创建线程，并将Runnable接口的子类对象作为参数传给Thread类的构造函数中
         4、Thread线程对象调用start方法，启动线程
