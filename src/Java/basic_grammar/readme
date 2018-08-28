@@ -79,3 +79,33 @@ String、Date等类对equals方法进行了重写，比较的是所指向的对�
 
 六、Object中的方法
     hashCode()、equals()、toString()、wait()、notify()、notifyAll()
+
+
+七、抽象类（abstract class）和接口（interface）
+1、抽象类：
+    含有abstract修饰符的类即为抽象类，Java中声明一个类时，可以不给出该类的所有实现细节，然后再定义一个或者多个子类继承
+抽象父类，重用父类中的代码、扩充并实现其未实现的功能。
+    abstract类不能创建实例对象。含有abstract方法的类必须定义为abstract class，但abstract class类中的方法不必是抽象的。
+abstract class类中定义的抽象方法必须在具体子类中实现，所以不能有抽象构造方法或抽象静态方法（因为子类不能重写父类的构造
+方法，static方法可以被继承，但不能被重写）。如果子类没有实现抽象父类中的所有抽象方法，那么子类也必须定义为abstract类型。
+    public abstract class Animal{
+        //声明抽象方法
+        public abstract void fun();
+    }
+
+    public class Person extends Animal{
+        public void fun(){
+            System.out.println("玩耍");
+        }
+    }
+
+2、接口：
+    可以说成是抽象类的一种特例，接口中的所有方法都必须是抽象的。接口中的方法默认为public abstract类型，接口中的成员变量
+默认为public static final类型。
+
+
+八、Java为什么不能多继承
+1、若子类继承的父类中拥有相同的成员变量，子类在引用该变量时将无法判别使用哪个父类的成员变量
+2、若子类继承的多个父类拥有相同方法，同时子类并未重写该方法（若重写，则直接使用子类中该方法），那么调用该方法时将无法
+确定调用哪个父类的方法
+    注：一个类可以实现多个接口，但只能继承一个类
