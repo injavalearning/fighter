@@ -17,7 +17,7 @@ Java集合：
            return h & (length-1);    //按位取并，作用上相当于取模
        }
 4、HashTable基于Dictionary类，HashMap基于AbstractMap类，两者都实现了Map接口。
-5、HashMap去掉了HashTable的contains方法，加上了containsKey和containsValue方法，
+5、HashMap去掉了HashTable的contains方法，保留了containsKey和containsValue方法，
    HashTable则保留了contains，containsValue和containsKey三个方法，其中contains和containsValue功能相同。
 6、HashTable中hash数组默认大小是11，增加的方式是 old*2+1，HashMap中hash数组的默认大小是16，而且一定是2的幂。
 
@@ -44,7 +44,7 @@ Segment的结构和HashMap类似，是一种数组和链表结构，一个Segmen
 bucket位置之后，通过键的equals()方法找到正确的键值对，然后返回值对象。
     详解：HashMap实际上是一个“链表散列”的数据结构，即数组和链表的结合体，HashMap底层就是一个数组结构，数组中的每
 一项又是一个链表。当新建一个HashMap的时候，系统会创建一个长度为 capacity 的 Entry[] 数组，这个数组里可以存储元素的
-位置被称为“桶（bucket）”，每个 bucket 都有其指定索引，系统可以根据其索引快速访问该 bucket 里存储的元素,Entry就是
+位置被称为“桶（bucket）”，每个 bucket 都有其指定索引，系统可以根据其索引快速访问该 bucket 里存储的元素，Entry就是
 数组中的元素，每个 Map.Entry 其实就是一个key-value对，它持有一个指向下一个元素的引用，这就构成了链表。哈希表最常用的
 一种实现方法就是“拉链法”，我们可以理解为“链表的数组”：拉链法图。
 拉链法图2：一个长度为16的数组，每个元素存储的是一个链表的头结点，这些元素一般是通过hash(key)%len的方式存储到数组中。
@@ -73,9 +73,9 @@ hash(key)%length 达到这个效果，计算机中直接求余效率不如位运
 因为2的n次方实际就是1后面n个0，2的n次方-1实际就是n个1，尾数为1，所以可以达到hash的平均分布。
 
 4、HashMap的resize（rehash）（扩容）
-    答：当HashMap中的元素个数超过 数组大小*loadFactor时，就会进行数组扩容。默认的负载因子大小为0.75，也就是说，
-当一个map填满了75%的bucket时候，和其它集合类(如ArrayList等)一样，将会创建原来HashMap大小的两倍的bucket数组，来重新
-调整HashMap的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehash，因为它调用hash方法找到新的bucket位置。
+    答：当HashMap中的元素个数超过 数组大小*loadFactor时，就会进行数组扩容。默认的负载因子大小为0.75，也就是说，当一个
+map填满了75%的bucket的时候，和其它集合类（如ArrayList等）一样，将会创建原来HashMap大小的两倍的bucket数组，来重新调整
+HashMap的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehash，因为它调用hash方法找到新的bucket位置。
 
 5、为什么String, Integer这样的wrapper类适合作为键？
     答：String, Integer这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，
