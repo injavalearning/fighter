@@ -2,18 +2,18 @@ Java集合：
 
 一、HashTable和HashMap的区别
 1、HashTable是线程安全的，HashMap不是线程安全的，HashMap性能会高一些。
-2、HashTable不允许null值(key和value都不可以) ,HashMap允许null值(key和value都可以)。
+2、HashTable不允许null值(key和value都不可以) ，HashMap允许null值(key和value都可以)。
 3、哈希值的使用不同，HashTable直接使用对象的hashCode，代码如下
        int hash = key.hashCode();
        int index = (hash & 0x7FFFFFFF) % tab.length;
    而HashMap重新计算hash值，而且用于代替求模（put方法会调用indexFor方法），代码如下：
        int hash = hash(key);
-       int i = indexFor(hash, table.length);
+       int i = indexFor(hash， table.length);
        static int hash(Object key) {
            int h;
            return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
        }
-       static int indexFor(int h, int length) {
+       static int indexFor(int h， int length) {
            return h & (length-1);    //按位取并，作用上相当于取模
        }
 4、HashTable基于Dictionary类，HashMap基于AbstractMap类，两者都实现了Map接口。
@@ -37,7 +37,7 @@ Segment的结构和HashMap类似，是一种数组和链表结构，一个Segmen
 
 三、HashMap的问题
 1、HashMap的原理：
-    答：HashMap是基于hashing的原理，它是在bucket中储存键对象和值对象，作为Map.Entry。我们使用put(key, value)存储
+    答：HashMap是基于hashing的原理，它是在bucket中储存键对象和值对象，作为Map.Entry。我们使用put(key， value)存储
 对象到HashMap中，使用get(key)从HashMap中获取对象。当我们给put()方法传递键和值时，它先对键调用hashCode()方法，返回
 的hashCode用于找到bucket位置来储存Entry对象，当两个Entry对象的key的hashCode()返回值相同时，将由 key通过 equals()
 比较决定是采用覆盖行为，还是产生 Entry 链。当调用get()方法获取对象时，先使用键对象的hashcode找到bucket位置，找到
@@ -49,9 +49,9 @@ bucket位置之后，通过键的equals()方法找到正确的键值对，然后
 一种实现方法就是“拉链法”，我们可以理解为“链表的数组”：拉链法图。
 拉链法图2：一个长度为16的数组，每个元素存储的是一个链表的头结点，这些元素一般是通过hash(key)%len的方式存储到数组中。
 Entry类里面有一个next属性，作用是指向下一个Entry。打个比方， 第一个键值对A进来，通过计算其key的hash得到的index=0，
-记做:Entry[0] = A。一会儿又进来一个键值对B，通过计算其index也等于0，现在怎么办？HashMap会这样做:A.next = B,
-如果又进来C,index也等于0,那么B.next = C，这样我们发现index=0的地方其实存取了A,B,C三个键值对,他们通过next这个属性链接
-在一起。
+记做:Entry[0] = A。一会儿又进来一个键值对B，通过计算其index也等于0，现在怎么办？HashMap会这样做:A.next = B，
+如果又进来C，index也等于0，那么B.next = C，这样我们发现index=0的地方其实存取了A，B，C三个键值对，他们通过next这个属性
+链接在一起。
     当创建 HashMap 时，有一个默认的负载因子（load factor），其默认值为 0.75，这是时间和空间成本上一种折衷：增大负载因子
 可以减少 Hash 表（就是那个 Entry 数组）所占用的内存空间，但会增加查询数据的时间开销，而查询是最频繁的的操作（HashMap
 的 get() 与 put() 方法都要用到查询）；减小负载因子会提高数据查询的性能，但会增加 Hash 表所占用的内存空间。
@@ -65,7 +65,7 @@ Entry类里面有一个next属性，作用是指向下一个Entry。打个比方
 3、HashMap的大小为什么是2的幂次：
     答：HashMap为了存取高效，要尽量减少碰撞，就是要尽量把数据分配均匀，每个链表长度大致相同，我们可以通过取模操作
 hash(key)%length 达到这个效果，计算机中直接求余效率不如位运算，源码中做了优化
-       static int indexFor(int h, int length) {
+       static int indexFor(int h， int length) {
            return h & (length-1);    //按位取并，作用上相当于取模
        }
 如果length不为2的幂，比如15，那么length-1的2进制就会变成1110。在h为随机数的情况下，和1110做 & 操作，尾数永远为0。
@@ -77,8 +77,8 @@ hash(key)%length 达到这个效果，计算机中直接求余效率不如位运
 map填满了75%的bucket的时候，和其它集合类（如ArrayList等）一样，将会创建原来HashMap大小的两倍的bucket数组，来重新调整
 HashMap的大小，并将原来的对象放入新的bucket数组中。这个过程叫作rehash，因为它调用hash方法找到新的bucket位置。
 
-5、为什么String, Integer这样的wrapper类适合作为键？
-    答：String, Integer这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，
+5、为什么String， Integer这样的wrapper类适合作为键？
+    答：String， Integer这样的wrapper类作为HashMap的键是再适合不过了，而且String最为常用。因为String是不可变的，
 也是final的，而且已经重写了equals()和hashCode()方法了，其他的wrapper类也有这个特点。不可变性是必要的，因为为了
 要计算hashCode()，就要防止键值改变，如果键值在放入时和获取时返回不同的hashCode的话，那么就不能从HashMap中找到
 你想要的对象，如果两个不相等的对象返回不同的hashCode的话，那么碰撞的几率就会小些，这样就能提高HashMap的性能。
